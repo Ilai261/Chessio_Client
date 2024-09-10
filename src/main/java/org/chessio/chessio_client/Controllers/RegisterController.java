@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-
 public class RegisterController {
 
     @FXML
@@ -26,7 +25,7 @@ public class RegisterController {
     private Button registerButton;
 
     @FXML
-    private void handleRegister() throws IOException{
+    private void handleRegister() throws IOException {
         // Retrieve the text from the username and password fields
         String username = usernameField.getText();
         String password = passwordField.getText();
@@ -38,18 +37,22 @@ public class RegisterController {
         // Clear the text fields after login logic
         usernameField.clear();
         passwordField.clear();
-        if(username.equals("admin") && password.equals("admin")){
-            // Instead of showing an alert, open a new window for the chess board
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/home_screen.fxml"));
-            Parent root = null;
-            root = fxmlLoader.load();
 
-            Stage stage = new Stage();
-            stage.setTitle("Chess Board");
-            stage.setScene(new Scene(root));
-            stage.show();
+        if (username.equals("admin") && password.equals("admin")) {
+            // Change the scene to home_screen.fxml instead of opening a new window
+            openNewScene("/org/chessio/chessio_client/home_screen.fxml");
         }
     }
 
+    public void openNewScene(String fxmlFilePath) throws IOException {
+        // Load the new FXML file
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFilePath));
+        Parent root = loader.load();
 
+        // Get the current stage using any node (e.g., loginButton or registerButton)
+        Stage stage = (Stage) registerButton.getScene().getWindow();
+
+        // Set the new scene on the current stage
+        stage.setScene(new Scene(root));
+    }
 }

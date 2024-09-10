@@ -38,5 +38,5 @@
         </children>
     </VBox>
     <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefHeight="31.0" prefWidth="66.0" text="התחבר" />
-    <Button fx:id="registerButton" onAction="#handleRegister" prefHeight="33.0" prefWidth="67.0" text="הירשם" textAlignment="CENTER" textOverrun="CLIP" />
+    <Button fx:id="registerButton" onAction="#handleRegister" prefHeight="30.0" prefWidth="140.0" text="אין לך משתמש?הירשם" textAlignment="CENTER" textOverrun="CLIP" />
 </VBox>
