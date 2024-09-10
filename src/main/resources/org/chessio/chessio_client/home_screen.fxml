@@ -13,9 +13,9 @@
         <HBox alignment="CENTER" layoutX="50.0" layoutY="150.0" prefHeight="100.0" prefWidth="320.0" spacing="30">
             <!-- Play with Bot Button with Icon Below Text -->
             <VBox alignment="CENTER">
-                <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
+                <Button fx:id="botGameButton" mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
                     <graphic>
-                        <VBox alignment="CENTER" spacing="5">
+                        <VBox alignment="CENTER" onMousePressed="#botPressed" spacing="5">
                             <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                 <image>
                                     <Image url="@Icons/bot_icon.png" />
@@ -31,7 +31,7 @@
             <VBox alignment="CENTER">
                 <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
                     <graphic>
-                        <VBox alignment="CENTER" prefWidth="85.0" spacing="5">
+                        <VBox fx:id="onlineGameBtn" alignment="CENTER" onMousePressed="#onlinePressed" prefWidth="85.0" spacing="5">
                             <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                 <image>
                                     <Image url="@Icons/searchOpponent_icon.png" />
@@ -48,7 +48,7 @@
         <VBox alignment="CENTER" layoutX="150.0" layoutY="270.0">
             <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
                 <graphic>
-                    <VBox alignment="CENTER" spacing="5">
+                    <VBox fx:id="quitButton" alignment="CENTER" onMousePressed="#quitPressed" spacing="5">
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@Icons/quit_icon.png" />

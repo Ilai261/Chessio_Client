@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Label?>
 
-<GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.chessio.chessio_client.Controllers.ChessBoardController">
-        <!-- Define your chess board UI here -->
-        <Label text="Chess Board" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <!-- You can add more UI elements for chess logic here -->
+<GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml" fx:controller="org.chessio.chessio_client.Controllers.ChessBoardController">
+        <!-- Chessboard grid will be filled programmatically in the controller -->
 </GridPane>

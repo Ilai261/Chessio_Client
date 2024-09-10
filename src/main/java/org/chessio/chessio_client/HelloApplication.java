@@ -17,7 +17,6 @@ public class HelloApplication extends Application {
 
         // Automatically resize the window to fit the scene's content
         stage.sizeToScene();
-
         stage.show();
 
     }
