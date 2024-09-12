@@ -6,6 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.effect.ColorAdjust;
 
 public class ChessBoardController {
 
@@ -86,6 +87,17 @@ public class ChessBoardController {
                 ImageView imageView = new ImageView(image);
                 imageView.setFitWidth(TILE_SIZE * 0.8); // Adjust image size to fit the tile
                 imageView.setFitHeight(TILE_SIZE * 0.8);
+
+                if (color.equals("white")) {
+                    // Apply transparency and make white pieces appear brighter
+                    imageView.setOpacity(0.99);  // Slightly adjust opacity
+
+                    // Apply brightness effect using ColorAdjust
+                    ColorAdjust colorAdjust = new ColorAdjust();
+                    colorAdjust.setBrightness(0.1); // Increase brightness
+                    imageView.setEffect(colorAdjust);
+                }
+
                 return imageView;
             } else {
                 System.err.println("Error loading image: " + imagePath);
