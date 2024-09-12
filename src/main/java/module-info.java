@@ -11,4 +11,6 @@ module org.chessio.chessio_client {
 
     opens org.chessio.chessio_client to javafx.fxml;
     exports org.chessio.chessio_client;
+    exports org.chessio.chessio_client.Controllers;
+    opens org.chessio.chessio_client.Controllers to javafx.fxml;
 }

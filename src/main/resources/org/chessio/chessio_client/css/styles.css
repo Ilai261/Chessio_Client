@@ -1,0 +1,20 @@
+#rounded-button {
+    -fx-background-color: #4CAF50; /* Green background */
+    -fx-text-fill: white;          /* White text color */
+    -fx-font-size: 16px;           /* Font size */
+    -fx-background-radius: 20px;   /* Rounded corners */
+    -fx-padding: 10;               /* Padding inside the button */
+    -fx-border-radius: 20px;       /* Rounded border */
+    -fx-border-color: transparent; /* Transparent border */
+    -fx-font-family: 'Monospaced'; /* Built-in Monospaced font */
+    -fx-font-weight: bold;         /* Bold font */
+    -fx-font-style: italic;        /* Italic font */
+    -fx-cursor: hand;              /* Hand cursor on hover */
+}
+
+Label {
+    -fx-font-family: 'Monospaced'; /* Apply Monospaced font to all labels */
+    -fx-font-weight: bold;         /* Bold font for labels */
+    -fx-font-style: italic;        /* Italic font for labels */
+    -fx-font-size: 18px;           /* Font size for labels */
+}
