@@ -4,9 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -14,19 +12,17 @@ import java.io.IOException;
 public class HomeScreenController {
 
     @FXML
-    private Button botGameButton;
-
-    @FXML
-    private VBox onlineGameBtn;
-
-    @FXML
-    private VBox quitButton;
-
-    @FXML
     void botPressed(MouseEvent event) {
         try {
-            // Load chessboard screen when bot button is pressed
-            openNewScene("/org/chessio/chessio_client/chessBoard.fxml");
+            // Open the settings screen
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/choose_settings.fxml"));
+
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Choose Settings");
+            stage.setScene(new Scene(root));
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,19 +36,9 @@ public class HomeScreenController {
     @FXML
     void quitPressed(MouseEvent event) {
         // Handle quit functionality
-        Stage stage = (Stage) quitButton.getScene().getWindow();
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
-    // Utility function to open new scenes
-    public void openNewScene(String fxmlFilePath) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFilePath));
-        Parent root = loader.load();
-
-        // Get current stage (window) from any node in the scene, e.g., botGameButton
-        Stage stage = (Stage) botGameButton.getScene().getWindow();
-
-        // Set the new scene on the current stage
-        stage.setScene(new Scene(root));
-    }
+    // Other methods...
 }
