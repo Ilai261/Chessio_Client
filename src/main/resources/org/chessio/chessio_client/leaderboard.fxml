@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.chessio.chessio_client.Controllers.LeaderboardController" spacing="10" alignment="CENTER">
+
+    <TableView fx:id="leaderboardTable" prefWidth="300">
+        <columns>
+            <TableColumn text="Rank" prefWidth="100"/>
+            <TableColumn text="Player Name" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+</VBox>

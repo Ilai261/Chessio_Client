@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="421.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.Controllers.HomeScreenController">
+    <children>
+        <!-- Title Label -->
+        <Label layoutX="177.0" layoutY="42.0" prefHeight="28.0" prefWidth="140.0" text="Let's Play!" />
+
+        <!-- Main Container with Spacing Between Buttons -->
+        <HBox alignment="CENTER" layoutX="50.0" layoutY="150.0" prefHeight="100.0" prefWidth="320.0" spacing="30">
+            <!-- Play with Bot Button with Icon Below Text -->
+            <VBox alignment="CENTER">
+                <Button fx:id="botGameButton" mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
+                    <graphic>
+                        <VBox alignment="CENTER" onMousePressed="#botPressed" spacing="5">
+                            <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@Icons/bot_icon.png" />
+                                </image>
+                            </ImageView>
+                            <Label text="Play with Bot" />
+                        </VBox>
+                    </graphic>
+                </Button>
+            </VBox>
+
+            <!-- Search Online Button with Icon Below Text -->
+            <VBox alignment="CENTER">
+                <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
+                    <graphic>
+                        <VBox fx:id="onlineGameBtn" alignment="CENTER" onMousePressed="#onlinePressed" prefWidth="85.0" spacing="5">
+                            <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@Icons/searchOpponent_icon.png" />
+                                </image>
+                            </ImageView>
+                            <Label text="Search Online" />
+                        </VBox>
+                    </graphic>
+                </Button>
+            </VBox>
+        </HBox>
+
+        <!-- Quit Button with Icon Below Text -->
+        <VBox alignment="CENTER" layoutX="150.0" layoutY="270.0">
+            <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
+                <graphic>
+                    <VBox fx:id="quitButton" alignment="CENTER" onMousePressed="#quitPressed" spacing="5">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@Icons/quit_icon.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="Quit" />
+                    </VBox>
+                </graphic>
+            </Button>
+        </VBox>
+    </children>
+</AnchorPane>
