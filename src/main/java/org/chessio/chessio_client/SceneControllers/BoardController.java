@@ -1,4 +1,4 @@
-package org.chessio.chessio_client.Controllers;
+package org.chessio.chessio_client.SceneControllers;
 
 
 public class BoardController {
