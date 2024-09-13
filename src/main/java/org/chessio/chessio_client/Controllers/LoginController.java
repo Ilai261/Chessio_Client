@@ -52,9 +52,10 @@ public class LoginController {
         usernameField.clear();
         passwordField.clear();
 
-        // Change the scene instead of opening a new window
-        openNewScene("/org/chessio/chessio_client/chessBoard.fxml");
-        System.out.println("From Login to chessBoard");
+        // here we need to send a request to the server regarding the login, if successful go to homeScreen
+        //?We should simply use here an outside function that moves between scenes to have less code
+        openNewScene("/org/chessio/chessio_client/home_screen.fxml");
+        System.out.println("From Login to homeScreen");
     }
 
     @FXML
@@ -65,7 +66,7 @@ public class LoginController {
         openNewScene("/org/chessio/chessio_client/register.fxml");
     }
 
-    public void openNewScene(String fxmlFilePath) throws IOException {
+    private void openNewScene(String fxmlFilePath) throws IOException {
         // Load the new FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFilePath));
         Parent root = loader.load();

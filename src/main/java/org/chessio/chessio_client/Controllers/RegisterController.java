@@ -40,6 +40,7 @@ public class RegisterController {
 
         if (username.equals("admin") && password.equals("admin")) {
             // Change the scene to home_screen.fxml instead of opening a new window
+            //?We should simply use here an outside function that moves between scenes to have less code
             openNewScene("/org/chessio/chessio_client/home_screen.fxml");
         }
     }

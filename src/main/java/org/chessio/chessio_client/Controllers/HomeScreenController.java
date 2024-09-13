@@ -16,7 +16,8 @@ public class HomeScreenController {
         try {
             // Open the settings screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/choose_settings.fxml"));
-
+            //?We should simply use here an outside function that moves between scenes to have less code,
+            // make this a scene instead of a pop-up
             Parent root = loader.load();
 
             Stage stage = new Stage();
