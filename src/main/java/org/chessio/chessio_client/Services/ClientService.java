@@ -1,8 +1,7 @@
 package org.chessio.chessio_client.Services;
 
-import org.chessio.chessio_client.Models.Game;
 import org.chessio.chessio_client.Models.LoginRequest;
-import org.chessio.chessio_client.Models.RegisterRequest;
+import org.chessio.chessio_client.Models.RegistrationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -11,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 @Service
 public class ClientService
@@ -27,11 +24,11 @@ public class ClientService
     @Value("${server.port}")
     private int serverPort;
 
-    public ResponseEntity<String> register(RegisterRequest registerRequest)
+    public ResponseEntity<String> register(RegistrationRequest registerRequest)
     {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<RegisterRequest> request = new HttpEntity<>(registerRequest, headers);
+        HttpEntity<RegistrationRequest> request = new HttpEntity<>(registerRequest, headers);
 
         String baseUrl = "https://" + serverAddress + ":" + serverPort;
         String endpoint = "/register";

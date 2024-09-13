@@ -1,9 +1,15 @@
 package org.chessio.chessio_client.Models;
 
-public class RegisterRequest
+public class RegistrationRequest
 {
     private String userName;
     private String password;
+
+    public RegistrationRequest(String userName, String password)
+    {
+        this.userName = userName;
+        this.password = password;
+    }
 
     public String getPassword() {
         return password;
