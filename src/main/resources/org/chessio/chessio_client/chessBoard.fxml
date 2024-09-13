@@ -2,6 +2,6 @@
 
 <?import javafx.scene.layout.GridPane?>
 
-<GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml" fx:controller="org.chessio.chessio_client.Controllers.ChessBoardController">
+<GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml" fx:controller="org.chessio.chessio_client.SceneControllers.ChessBoardController">
         <!-- Chessboard grid will be filled programmatically in the controller -->
 </GridPane>

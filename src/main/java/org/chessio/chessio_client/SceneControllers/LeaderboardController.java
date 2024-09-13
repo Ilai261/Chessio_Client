@@ -1,4 +1,4 @@
-package org.chessio.chessio_client.Controllers;
+package org.chessio.chessio_client.SceneControllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
