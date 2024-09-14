@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.Scene;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
+import org.chessio.chessio_client.JavafxUtils.JavaFXUtils;
 
 public class LoginController
 {
@@ -91,6 +93,7 @@ public class LoginController
         }
         else
         {
+            JavaFXUtils.createAlert(response);
             System.out.println("Login failed: " + response.body());
         }
     }

@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.chessio.chessio_client.JavafxUtils.JavaFXUtils;
 import org.chessio.chessio_client.Models.RegistrationRequest;
 import org.chessio.chessio_client.Services.ClientHttpSender;
 
@@ -74,6 +75,7 @@ public class RegisterController {
         }
         else
         {
+            JavaFXUtils.createAlert(response);
             System.out.println("Registration failed: " + response.body());
         }
     }
