@@ -85,7 +85,7 @@ public class SettingsController {
 
             // Open the chessboard screen
             Stage gameStage = new Stage();
-            gameStage.setTitle("Chess Board");
+            gameStage.setTitle("Chess GraphicsBoard");
             gameStage.setScene(new Scene(root));
             gameStage.show();
         } catch (IOException e) {

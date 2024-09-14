@@ -13,6 +13,7 @@ module org.chessio.chessio_client {
     requires spring.context;
     requires java.net.http;
     requires com.fasterxml.jackson.databind;
+    requires chesslib;
 
     opens org.chessio.chessio_client to javafx.fxml;
     exports org.chessio.chessio_client;
@@ -20,4 +21,6 @@ module org.chessio.chessio_client {
     opens org.chessio.chessio_client.SceneControllers to javafx.fxml;
     exports org.chessio.chessio_client.Models;
     opens org.chessio.chessio_client.Models to javafx.fxml;
+    exports org.chessio.chessio_client.Manager;
+    opens org.chessio.chessio_client.Manager to javafx.fxml;
 }

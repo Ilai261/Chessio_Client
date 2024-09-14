@@ -1,12 +1,12 @@
 package org.chessio.chessio_client.Models;
 
 
-public class Board {
+public class GraphicsBoard {
 
     private String[][] board;
     private String color;
 
-    public Board(String color) {
+    public GraphicsBoard(String color) {
         this.color = color;
         this.board = new String[8][8];
         initializeBoard();
