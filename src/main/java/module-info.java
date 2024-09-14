@@ -18,5 +18,6 @@ module org.chessio.chessio_client {
     exports org.chessio.chessio_client;
     exports org.chessio.chessio_client.SceneControllers;
     opens org.chessio.chessio_client.SceneControllers to javafx.fxml;
-    exports org.chessio.chessio_client.Models to com.fasterxml.jackson.databind;
+    exports org.chessio.chessio_client.Models;
+    opens org.chessio.chessio_client.Models to javafx.fxml;
 }

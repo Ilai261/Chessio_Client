@@ -8,6 +8,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
 public class SettingsController {
@@ -21,8 +22,15 @@ public class SettingsController {
     @FXML
     private RadioButton blackRadioButton; // RadioButton for black pieces
 
+    private Stage homeStage; // Reference to the HomeScreenController stage
+
     private String selectedColor; // To hold the selected color
     private int enemyLevel; // To hold the selected enemy level
+
+    // Set the home stage from HomeScreenController
+    public void setHomeStage(Stage homeStage) {
+        this.homeStage = homeStage;
+    }
 
     @FXML
     public void initialize() {
@@ -57,9 +65,14 @@ public class SettingsController {
         System.out.println("Selected Color: " + selectedColor);
         System.out.println("Selected Enemy Level: " + enemyLevel);
 
-        // Close the settings window
-        Stage stage = (Stage) levelSlider.getScene().getWindow();
-        stage.close();
+        // Close the HomeScreen stage
+        if (homeStage != null) {
+            homeStage.close();
+        }
+
+        // Close the current settings window
+        Stage settingsStage = (Stage) levelSlider.getScene().getWindow();
+        settingsStage.close();
 
         // Load the ChessBoardController with the selected color and enemy level
         try {
@@ -67,9 +80,10 @@ public class SettingsController {
             Parent root = loader.load();
 
             // Get the controller and pass the selected settings
-            ChessBoardController chessBoardController = loader.getController();
+            BotBoardController chessBoardController = loader.getController();
             chessBoardController.initializeGame(selectedColor, enemyLevel); // Method to initialize the game with color and level
 
+            // Open the chessboard screen
             Stage gameStage = new Stage();
             gameStage.setTitle("Chess Board");
             gameStage.setScene(new Scene(root));

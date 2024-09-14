@@ -13,13 +13,18 @@ public class HomeScreenController {
 
     @FXML
     void botPressed(MouseEvent event) {
+
         try {
             // Open the settings screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/choose_settings.fxml"));
-            //?We should simply use here an outside function that moves between scenes to have less code,
-            // make this a scene instead of a pop-up
             Parent root = loader.load();
 
+            // Pass the HomeScreen stage to the SettingsController
+            SettingsController settingsController = loader.getController();
+            Stage homeStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            settingsController.setHomeStage(homeStage);
+
+            // Open the settings screen (you can replace this with a scene change)
             Stage stage = new Stage();
             stage.setTitle("Choose Settings");
             stage.setScene(new Scene(root));
@@ -40,6 +45,4 @@ public class HomeScreenController {
         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
-
-    // Other methods...
 }

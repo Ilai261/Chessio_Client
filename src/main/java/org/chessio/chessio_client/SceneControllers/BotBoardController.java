@@ -1,33 +1,62 @@
 package org.chessio.chessio_client.SceneControllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.effect.ColorAdjust;
+import org.chessio.chessio_client.Models.Board;
 
-public class ChessBoardController {
+
+public class BotBoardController {
 
     @FXML
     private GridPane gridPane; // Reference to the GridPane from the FXML
 
+    @FXML
+    private Button resignButton; // Resign button
+
+    @FXML
+    private ImageView resignIcon; // Resign button icon
+
+    @FXML
+    private Label turnLabel; // Label for "Your turn" (optional)
+
+    @FXML
+    private Label usernameLabel; // For the "Username" label
+
+
     private static final int TILE_SIZE = 80; // Size of each tile
     private static final int BOARD_SIZE = 8; // Chessboard is 8x8
 
-    private BoardController playerBoardController;
-    private BoardController enemyBoardController;
+    private Board playerBoard;
+    private Board enemyBoard;
     private boolean isPlayerBlack;
 
+
+    // Method to set the username
+    public void setUsername(String username) {
+        usernameLabel.setText(username);
+    }
+
+    // Method to update the turn status
+    public void setTurnStatus(String status) {
+        turnLabel.setText(status);
+    }
+
+    // Other existing methods and logic for chessboard, etc.
     // Method to initialize the chessboard with the selected color and enemy level
     public void initializeGame(String playerColor, int enemyLevel) {
         // Determine if the player is black
         isPlayerBlack = playerColor.equals("black");
 
         // Initialize the board for the player and the enemy
-        playerBoardController = new BoardController(playerColor);
-        enemyBoardController = new BoardController(isPlayerBlack ? "white" : "black");
+        playerBoard = new Board(playerColor);
+        enemyBoard = new Board(isPlayerBlack ? "white" : "black");
 
         // Now, you can use enemyLevel to configure the difficulty or behavior of the enemy later
         System.out.println("Initializing game with player color: " + playerColor + " and enemy level: " + enemyLevel);
@@ -35,6 +64,9 @@ public class ChessBoardController {
         // Create the chessboard display
         createChessBoard();
         printBoard();
+
+        // Load the resign button icon
+        loadResignButtonIcon();
     }
 
     // Method to create an 8x8 chessboard (only graphics)
@@ -50,9 +82,9 @@ public class ChessBoardController {
                 int displayRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row;
 
                 // Add pieces based on board state
-                String pieceSymbol = playerBoardController.getPieceAt(displayRow, col);
+                String pieceSymbol = playerBoard.getPieceAt(displayRow, col);
                 if (pieceSymbol == null) {
-                    pieceSymbol = enemyBoardController.getPieceAt(displayRow, col);
+                    pieceSymbol = enemyBoard.getPieceAt(displayRow, col);
                 }
 
                 // Create an ImageView for the chess piece if there's a piece on the square
@@ -113,10 +145,10 @@ public class ChessBoardController {
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 // First check player's board
-                String piece = playerBoardController.getPieceAt(row, col);
+                String piece = playerBoard.getPieceAt(row, col);
                 if (piece == null) {
                     // Then check enemy's board if player's piece is not present
-                    piece = enemyBoardController.getPieceAt(row, col);
+                    piece = enemyBoard.getPieceAt(row, col);
                 }
                 System.out.print((piece != null ? piece : "--") + " ");
             }
@@ -124,5 +156,16 @@ public class ChessBoardController {
         }
 
         System.out.println(); // Extra line after the board print
+    }
+
+    // Method to load the resign button icon
+    private void loadResignButtonIcon() {
+        String iconPath = "/org/chessio/chessio_client/Icons/resign_icon.png"; // Make sure the icon exists in this path
+        Image iconImage = new Image(getClass().getResourceAsStream(iconPath));
+        if (!iconImage.isError()) {
+            resignIcon.setImage(iconImage);
+        } else {
+            System.err.println("Error loading resign icon: " + iconPath);
+        }
     }
 }
