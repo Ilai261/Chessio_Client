@@ -41,6 +41,7 @@ public class BotBoardController {
     private boolean pieceSelected = false;
     private String selectedPiece = null;
     private int selectedRow = -1, selectedCol = -1;
+    private boolean isPlayerTurn;  // Track if it's the player's turn
 
     private com.github.bhlangonijr.chesslib.Board chesslibBoard = new com.github.bhlangonijr.chesslib.Board();
 
@@ -49,8 +50,14 @@ public class BotBoardController {
         isPlayerBlack = playerColor.equals("black");
         playerGraphicsBoard = new GraphicsBoard(playerColor);
         enemyGraphicsBoard = new GraphicsBoard(isPlayerBlack ? "white" : "black");
+
+        // Set the turn logic: White always starts, so check if player is white or black
+        isPlayerTurn = !isPlayerBlack; // Player's turn if they are white
+
         createChessBoard();
     }
+
+
 
     // Method to create the chessboard with pieces
     private void createChessBoard() {
@@ -90,6 +97,12 @@ public class BotBoardController {
 
     // Handle piece click event
     private void onPieceClicked(int row, int col, String pieceSymbol) {
+        // Ensure it's the player's turn before allowing them to move
+        if (!isPlayerTurn) {
+            System.out.println("It's not your turn!");
+            return;
+        }
+
         // If a piece was already selected, deselect it and remove highlights
         if (pieceSelected) {
             clearHighlights(); // Remove previous highlights
@@ -112,12 +125,15 @@ public class BotBoardController {
 
 
 
+
     // Handle tile click event for moving pieces
     private void onTileClicked(int row, int col) {
         if (pieceSelected && isLegalMove(selectedRow, selectedCol, row, col)) {
             movePiece(selectedRow, selectedCol, row, col); // Perform move
             pieceSelected = false; // Deselect after move
             clearHighlights(); // Clear highlights after the move
+            // Switch turns after a valid move
+            isPlayerTurn = !isPlayerTurn;
         } else if (pieceSelected) {
             // If the user clicks an invalid move, just clear the selection and highlights
             clearHighlights();
@@ -212,11 +228,47 @@ public class BotBoardController {
             // Reset the board UI
             gridPane.getChildren().clear(); // Clear the existing pieces and tiles
             createChessBoard(); // Re-create the chessboard after the move
+
+            // Switch the turn after a move
+            isPlayerTurn = !isPlayerTurn; // Toggle the turn after a move
+
+            System.out.println(isPlayerTurn ? "Player's turn" : "Opponent's turn");
+
+            // Check if the game is over (checkmate or stalemate)
+            if (chesslibBoard.isMated()) {
+                System.out.println("Checkmate! Game over.");
+                showEndGameScreen("Checkmate! You win!");
+            } else if (chesslibBoard.isStaleMate()) {
+                System.out.println("Stalemate! Game over.");
+                showEndGameScreen("Stalemate! It's a draw.");
+            }
         } else {
             System.out.println("Illegal move: " + from + " to " + to);
         }
     }
 
+
+
+
+    private void showEndGameScreen(String message) {
+        // Clear the current grid and display the end game message
+        gridPane.getChildren().clear();
+
+        Label endGameLabel = new Label(message);
+        endGameLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        gridPane.add(endGameLabel, 0, 0, BOARD_SIZE, BOARD_SIZE); // Span the label across the entire grid
+
+        // You can add more logic here to offer a "Play Again" button or exit the game
+        Button playAgainButton = new Button("Play Again");
+        playAgainButton.setOnAction(e -> restartGame());
+        gridPane.add(playAgainButton, BOARD_SIZE / 2, BOARD_SIZE / 2);
+    }
+
+    // Method to restart the game (optional, if needed)
+    private void restartGame() {
+        chesslibBoard = new com.github.bhlangonijr.chesslib.Board(); // Reset the chessboard
+        initializeGame(isPlayerBlack ? "black" : "white", 1); // Reinitialize the game
+    }
 
 
 
