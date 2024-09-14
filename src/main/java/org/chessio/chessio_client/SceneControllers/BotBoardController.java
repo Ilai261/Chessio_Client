@@ -232,24 +232,33 @@ public class BotBoardController {
         if (chesslibBoard.isMoveLegal(move, true)) {
             chesslibBoard.doMove(move);
 
-            // Check if there is a piece in the player's board and move it
+            // Check if the destination tile contains an enemy piece
             String pieceSymbol = playerGraphicsBoard.getPieceAt(fromRow, fromCol);
+            String targetPieceSymbol = enemyGraphicsBoard.getPieceAt(toRow, toCol);
+
             if (pieceSymbol != null) {
+                // If the player's piece is moving, check for enemy capture
+                if (targetPieceSymbol != null) {
+                    // Capture the enemy piece
+                    enemyGraphicsBoard.removePieceAt(toRow, toCol);
+                }
                 // Move player's piece to the destination
                 playerGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
                 playerGraphicsBoard.removePieceAt(fromRow, fromCol);
             } else {
-                // Otherwise, move the enemy's piece
+                // Otherwise, it's the enemy's turn to move
                 pieceSymbol = enemyGraphicsBoard.getPieceAt(fromRow, fromCol);
-                enemyGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
-                enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
-            }
+                String targetPlayerPiece = playerGraphicsBoard.getPieceAt(toRow, toCol);
 
-            // Ensure any enemy piece at the destination is captured and removed
-            if (playerGraphicsBoard.getPieceAt(toRow, toCol) != null) {
-                enemyGraphicsBoard.removePieceAt(toRow, toCol); // Capture enemy piece
-            } else if (enemyGraphicsBoard.getPieceAt(toRow, toCol) != null) {
-                playerGraphicsBoard.removePieceAt(toRow, toCol); // Capture player piece
+                if (pieceSymbol != null) {
+                    // If there's a player piece at the destination, capture it
+                    if (targetPlayerPiece != null) {
+                        playerGraphicsBoard.removePieceAt(toRow, toCol);
+                    }
+                    // Move enemy's piece to the destination
+                    enemyGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
+                    enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
+                }
             }
 
             // Clear and update the grid after the move
@@ -273,6 +282,7 @@ public class BotBoardController {
             System.out.println("Illegal move: " + from + " to " + to);
         }
     }
+
 
 
 
