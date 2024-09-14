@@ -32,4 +32,12 @@ public class GraphicsBoard {
         }
         return null;
     }
+
+    public void setPieceAt(int row, int col, String pieceSymbol) {
+        board[row][col] = pieceSymbol;
+    }
+
+    public void removePieceAt(int row, int col) {
+        board[row][col] = null;
+    }
 }

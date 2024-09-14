@@ -90,25 +90,45 @@ public class BotBoardController {
 
     // Handle piece click event
     private void onPieceClicked(int row, int col, String pieceSymbol) {
-        if (!pieceSelected) {
-            selectedPiece = pieceSymbol;
-            selectedRow = row;
-            selectedCol = col;
-            highlightTile(row,col);
-            //show updated the board
-            highlightLegalMoves(row, col); // Highlight possible moves
-            pieceSelected = true;
-        } else {
-            System.out.println("Piece already selected.");
+        // If a piece was already selected, deselect it and remove highlights
+        if (pieceSelected) {
+            clearHighlights(); // Remove previous highlights
+            if (selectedRow == row && selectedCol == col) {
+                // Same piece clicked again, cancel the selection
+                pieceSelected = false;
+                selectedPiece = null;
+                return;
+            }
         }
+
+        // Select the new piece and highlight its possible moves
+        selectedPiece = pieceSymbol;
+        selectedRow = row;
+        selectedCol = col;
+        highlightTile(row, col); // Highlight the selected tile
+        highlightLegalMoves(row, col); // Highlight possible moves
+        pieceSelected = true;
     }
+
+
 
     // Handle tile click event for moving pieces
     private void onTileClicked(int row, int col) {
         if (pieceSelected && isLegalMove(selectedRow, selectedCol, row, col)) {
             movePiece(selectedRow, selectedCol, row, col); // Perform move
             pieceSelected = false; // Deselect after move
+            clearHighlights(); // Clear highlights after the move
+        } else if (pieceSelected) {
+            // If the user clicks an invalid move, just clear the selection and highlights
+            clearHighlights();
+            pieceSelected = false;
         }
+    }
+
+    // Method to clear all highlighted tiles
+    private void clearHighlights() {
+        gridPane.getChildren().clear(); // Clear the grid
+        createChessBoard(); // Recreate the board without any highlights
     }
 
     // Highlight legal moves for a selected piece
@@ -122,8 +142,8 @@ public class BotBoardController {
             for (Move move : legalMoves) {
                 if (move.getFrom().equals(square)) {
                     int toRow = getRowFromUci(move.getTo().value());
-                    int toCol = getColFromUci(move.getTo().value().toLowerCase());//the problem
-                    highlightTile(toRow, toCol);
+                    int toCol = getColFromUci(move.getTo().value().toLowerCase());
+                    highlightTile(toRow, toCol); // Highlight legal moves without hiding pieces
                 }
             }
         } catch (Exception e) {
@@ -131,12 +151,23 @@ public class BotBoardController {
         }
     }
 
+
+
+    // Method to highlight tiles where the piece can move or is selected
     private void highlightTile(int row, int col) {
         // Ensure row and col are within valid bounds
         if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
-            Rectangle tile = new Rectangle(TILE_SIZE, TILE_SIZE);
-            tile.setFill(Color.YELLOW); // Highlight the tile with yellow color
-            gridPane.add(tile, col, row);
+            for (javafx.scene.Node node : gridPane.getChildren()) {
+                if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col) {
+                    if (node instanceof Rectangle) {
+                        Rectangle tile = (Rectangle) node;
+                        // Darken the existing background color of the tile
+                        Color originalColor = (Color) tile.getFill();
+                        Color highlightedColor = originalColor.darker(); // Darken it slightly
+                        tile.setFill(highlightedColor);
+                    }
+                }
+            }
         } else {
             System.err.println("Invalid tile position: row=" + row + ", col=" + col);
         }
@@ -162,9 +193,22 @@ public class BotBoardController {
         Square from = getSquare(fromRow, fromCol);
         Square to = getSquare(toRow, toCol);
 
+        // Move the piece in the chesslibBoard
         Move move = new Move(from, to);
         if (chesslibBoard.isMoveLegal(move, true)) {
             chesslibBoard.doMove(move);
+
+            // Update the piece in the GraphicsBoard (both player and enemy boards)
+            String pieceSymbol = playerGraphicsBoard.getPieceAt(fromRow, fromCol);
+            if (pieceSymbol == null) {
+                pieceSymbol = enemyGraphicsBoard.getPieceAt(fromRow, fromCol);
+                enemyGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
+                enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
+            } else {
+                playerGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
+                playerGraphicsBoard.removePieceAt(fromRow, fromCol);
+            }
+
             // Reset the board UI
             gridPane.getChildren().clear(); // Clear the existing pieces and tiles
             createChessBoard(); // Re-create the chessboard after the move
@@ -172,6 +216,9 @@ public class BotBoardController {
             System.out.println("Illegal move: " + from + " to " + to);
         }
     }
+
+
+
 
 
     // Utility methods for square conversions
