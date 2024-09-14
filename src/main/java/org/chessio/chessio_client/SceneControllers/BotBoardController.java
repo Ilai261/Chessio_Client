@@ -63,6 +63,7 @@ public class BotBoardController {
     private void createChessBoard() {
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
+                // Create the tile
                 Rectangle tile = createTile(row, col);
                 gridPane.add(tile, col, row);
 
@@ -77,15 +78,34 @@ public class BotBoardController {
                 final int finalCol = col;
                 final String finalPieceSymbol = pieceSymbol;
 
+                // Attach click events for both the tile and the piece
                 if (pieceSymbol != null) {
                     ImageView piece = createPiece(pieceSymbol);
                     gridPane.add(piece, col, row);
-                    // Attach a click event listener for pieces
-                    piece.setOnMouseClicked(e -> onPieceClicked(finalRow, finalCol, finalPieceSymbol));
+
+                    // Piece click event
+                    piece.setOnMouseClicked(e -> handleTileOrPieceClick(finalRow, finalCol, finalPieceSymbol));
                 }
+
+                // Tile click event
+                tile.setOnMouseClicked(e -> handleTileOrPieceClick(finalRow, finalCol, finalPieceSymbol));
             }
         }
     }
+
+    // Handle both piece and tile clicks in a unified way
+    private void handleTileOrPieceClick(int row, int col, String pieceSymbol) {
+        if (pieceSelected) {
+            // If a piece is already selected, we are attempting to move it
+            onTileClicked(row, col);
+        } else {
+            // If no piece is selected, we are attempting to select a piece
+            if (pieceSymbol != null) {
+                onPieceClicked(row, col, pieceSymbol);
+            }
+        }
+    }
+
 
     // Method to create a chessboard tile
     private Rectangle createTile(int row, int col) {
@@ -102,7 +122,6 @@ public class BotBoardController {
             System.out.println("It's not your turn!");
             return;
         }
-
         // If a piece was already selected, deselect it and remove highlights
         if (pieceSelected) {
             clearHighlights(); // Remove previous highlights
@@ -113,7 +132,6 @@ public class BotBoardController {
                 return;
             }
         }
-
         // Select the new piece and highlight its possible moves
         selectedPiece = pieceSymbol;
         selectedRow = row;
@@ -214,22 +232,31 @@ public class BotBoardController {
         if (chesslibBoard.isMoveLegal(move, true)) {
             chesslibBoard.doMove(move);
 
-            // Update the piece in the GraphicsBoard (both player and enemy boards)
+            // Check if there is a piece in the player's board and move it
             String pieceSymbol = playerGraphicsBoard.getPieceAt(fromRow, fromCol);
-            if (pieceSymbol == null) {
+            if (pieceSymbol != null) {
+                // Move player's piece to the destination
+                playerGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
+                playerGraphicsBoard.removePieceAt(fromRow, fromCol);
+            } else {
+                // Otherwise, move the enemy's piece
                 pieceSymbol = enemyGraphicsBoard.getPieceAt(fromRow, fromCol);
                 enemyGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
                 enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
-            } else {
-                playerGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
-                playerGraphicsBoard.removePieceAt(fromRow, fromCol);
             }
 
-            // Reset the board UI
-            gridPane.getChildren().clear(); // Clear the existing pieces and tiles
-            createChessBoard(); // Re-create the chessboard after the move
+            // Ensure any enemy piece at the destination is captured and removed
+            if (playerGraphicsBoard.getPieceAt(toRow, toCol) != null) {
+                enemyGraphicsBoard.removePieceAt(toRow, toCol); // Capture enemy piece
+            } else if (enemyGraphicsBoard.getPieceAt(toRow, toCol) != null) {
+                playerGraphicsBoard.removePieceAt(toRow, toCol); // Capture player piece
+            }
 
-            // Switch the turn after a move
+            // Clear and update the grid after the move
+            gridPane.getChildren().clear(); // Clear the grid
+            createChessBoard(); // Recreate the board with updated pieces
+
+            // Switch the turn after a valid move
             isPlayerTurn = !isPlayerTurn; // Toggle the turn after a move
 
             System.out.println(isPlayerTurn ? "Player's turn" : "Opponent's turn");
@@ -246,6 +273,8 @@ public class BotBoardController {
             System.out.println("Illegal move: " + from + " to " + to);
         }
     }
+
+
 
 
 
