@@ -95,6 +95,7 @@ public class BotBoardController {
             selectedRow = row;
             selectedCol = col;
             highlightTile(row,col);
+            //show updated the board
             highlightLegalMoves(row, col); // Highlight possible moves
             pieceSelected = true;
         } else {
@@ -121,7 +122,7 @@ public class BotBoardController {
             for (Move move : legalMoves) {
                 if (move.getFrom().equals(square)) {
                     int toRow = getRowFromUci(move.getTo().value());
-                    int toCol = getColFromUci(move.getTo().value());//the problem
+                    int toCol = getColFromUci(move.getTo().value().toLowerCase());//the problem
                     highlightTile(toRow, toCol);
                 }
             }
