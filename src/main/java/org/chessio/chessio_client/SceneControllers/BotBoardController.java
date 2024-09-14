@@ -12,7 +12,12 @@ import org.chessio.chessio_client.Models.GraphicsBoard;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveGenerator;
+import com.github.bhlangonijr.chesslib.Board;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.List;
 
 public class BotBoardController {
@@ -43,7 +48,10 @@ public class BotBoardController {
     private int selectedRow = -1, selectedCol = -1;
     private boolean isPlayerTurn;  // Track if it's the player's turn
 
-    private com.github.bhlangonijr.chesslib.Board chesslibBoard = new com.github.bhlangonijr.chesslib.Board();
+    private Board chesslibBoard = new Board();
+    private Process stockfishProcess;
+    private PrintWriter stockfishWriter;
+    private BufferedReader stockfishReader;
 
     // Initialize the game
     public void initializeGame(String playerColor, int enemyLevel) {
