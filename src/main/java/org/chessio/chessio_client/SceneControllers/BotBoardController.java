@@ -59,10 +59,13 @@ public class BotBoardController {
 
         // Set the turn logic: White always starts, so check if player is white or black
         isPlayerTurn = !isPlayerBlack; // Player's turn if they are white
-
         createChessBoard();
         startStockfish();
         setStockfishLevel(enemyLevel);  // Set Stockfish level
+        if (!isPlayerTurn)
+        {
+            makeEnemyMove();
+        }
     }
 
     private void startStockfish() {
