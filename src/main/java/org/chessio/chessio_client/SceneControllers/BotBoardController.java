@@ -173,7 +173,6 @@ public class BotBoardController {
             enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
         }
 
-
         // Update the grid after the move
         gridPane.getChildren().clear();
         createChessBoard();
@@ -181,6 +180,15 @@ public class BotBoardController {
         // Toggle the turn after a valid move
         isPlayerTurn = !isPlayerTurn;
         System.out.println(isPlayerTurn ? "Player's turn" : "Opponent's turn");
+
+        // Check for checkmate or stalemate
+        if (chesslibBoard.isMated()) {
+            System.out.println("Checkmate! Game over.");
+            showEndGameScreen("Checkmate! You lost...");
+        } else if (chesslibBoard.isStaleMate()) {
+            System.out.println("Stalemate! Game over.");
+            showEndGameScreen("Stalemate! It's a draw.");
+        }
     }
 
 
