@@ -159,7 +159,6 @@ public class BotBoardController {
             pieceSelected = false; // Deselect after move
             clearHighlights(); // Clear highlights after the move
             // Switch turns after a valid move
-            isPlayerTurn = !isPlayerTurn;
         } else if (pieceSelected) {
             // If the user clicks an invalid move, just clear the selection and highlights
             clearHighlights();
