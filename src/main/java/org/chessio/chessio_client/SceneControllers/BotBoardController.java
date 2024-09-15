@@ -1,22 +1,27 @@
 package org.chessio.chessio_client.SceneControllers;
 
-import com.github.bhlangonijr.chesslib.Piece;
+import com.github.bhlangonijr.chesslib.*;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.chessio.chessio_client.Models.GraphicsBoard;
-import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveGenerator;
-import com.github.bhlangonijr.chesslib.Board;
 
 import java.io.*;
+import java.io.File;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class BotBoardController {
 
@@ -139,17 +144,37 @@ public class BotBoardController {
             Move move = new Move(from, to);
 
             if (chesslibBoard.isMoveLegal(move, true)) {
+                moveEnemyPiece(getRowFromUci(from.value()), getColFromUci(from.value()),
+                        getRowFromUci(to.value()), getColFromUci(to.value()), move);
                 chesslibBoard.doMove(move);
-                handlePostMoveUpdate(getRowFromUci(from.value()), getColFromUci(from.value()),
-                        getRowFromUci(to.value()), getColFromUci(to.value()));
+                // Check for checkmate or stalemate
+                if (chesslibBoard.isMated()) {
+                    System.out.println("Checkmate! Game over.");
+                    showEndGameScreen("Checkmate! You lost...");
+                } else if (chesslibBoard.isStaleMate()) {
+                    System.out.println("Stalemate! Game over.");
+                    showEndGameScreen("Stalemate! It's a draw.");
+                }
             }
         }
         isPlayerTurn = true; // Player's turn
     }
 
-    private void handlePostMoveUpdate(int fromRow, int fromCol, int toRow, int toCol) {
+    private void moveEnemyPiece(int fromRow, int fromCol, int toRow, int toCol, Move move) {
         // Determine if the move is for the player or the enemy
         String pieceSymbol = isPlayerTurn ? playerGraphicsBoard.getPieceAt(fromRow, fromCol) : enemyGraphicsBoard.getPieceAt(fromRow, fromCol);
+
+        // Handle castling
+        Piece movingPiece = chesslibBoard.getPiece(move.getFrom());
+        if (movingPiece.getPieceType() == PieceType.KING && Math.abs(fromCol - toCol) == 2) {
+            makeCastling(fromRow, toCol, enemyGraphicsBoard);
+        }
+        // Handle en passant
+        else if (movingPiece.getPieceType() == PieceType.PAWN && chesslibBoard.getEnPassantTarget() != Square.NONE
+                && move.getTo().equals(chesslibBoard.getEnPassantTarget())) {
+            int captureRow = isPlayerBlack ? toRow + 1 : toRow - 1;
+            enemyGraphicsBoard.removePieceAt(captureRow, toCol); // Remove captured pawn
+        }
 
         // Remove any piece at the destination from the opponent's board
         if (isPlayerTurn) {
@@ -180,14 +205,15 @@ public class BotBoardController {
         // Toggle the turn after a valid move
         isPlayerTurn = !isPlayerTurn;
         System.out.println(isPlayerTurn ? "Player's turn" : "Opponent's turn");
+    }
 
-        // Check for checkmate or stalemate
-        if (chesslibBoard.isMated()) {
-            System.out.println("Checkmate! Game over.");
-            showEndGameScreen("Checkmate! You lost...");
-        } else if (chesslibBoard.isStaleMate()) {
-            System.out.println("Stalemate! Game over.");
-            showEndGameScreen("Stalemate! It's a draw.");
+    private void makeCastling(int fromRow, int toCol, GraphicsBoard graphicsBoard) {
+        if (toCol == 6) { // Kingside castling
+            graphicsBoard.setPieceAt(fromRow, 5, graphicsBoard.getPieceAt(fromRow, 7)); // Move rook
+            graphicsBoard.removePieceAt(fromRow, 7);
+        } else if (toCol == 2) { // Queenside castling
+            graphicsBoard.setPieceAt(fromRow, 3, graphicsBoard.getPieceAt(fromRow, 0)); // Move rook
+            graphicsBoard.removePieceAt(fromRow, 0);
         }
     }
 
@@ -279,7 +305,7 @@ public class BotBoardController {
     // Handle tile click event for moving pieces
     private void onTileClicked(int row, int col) {
         if (pieceSelected && isLegalMove(selectedRow, selectedCol, row, col)) {
-            movePiece(selectedRow, selectedCol, row, col); // Perform move
+            movePlayerPiece(selectedRow, selectedCol, row, col); // Perform move
             pieceSelected = false; // Deselect after move
             clearHighlights(); // Clear highlights after the move
             // Switch turns after a valid move
@@ -369,7 +395,7 @@ public class BotBoardController {
         return false;
     }
 
-    private void movePiece(int fromRow, int fromCol, int toRow, int toCol) {
+    private void movePlayerPiece(int fromRow, int fromCol, int toRow, int toCol) {
         // Adjust the row and column based on the player's color
         int adjustedFromRow = isPlayerBlack ? BOARD_SIZE - 1 - fromRow : fromRow;
         int adjustedToRow = isPlayerBlack ? BOARD_SIZE - 1 - toRow : toRow;
@@ -381,6 +407,18 @@ public class BotBoardController {
 
         // Move the piece in the chesslibBoard
         Move move = new Move(from, to);
+
+        // Check if the move is castling
+        Piece movingPiece = chesslibBoard.getPiece(from);
+        if (movingPiece.getPieceType() == PieceType.KING && Math.abs(fromCol - toCol) == 2) {
+            makeCastling(fromRow, toCol, playerGraphicsBoard);
+        }
+        // Handle en passant
+        else if (movingPiece.getPieceType() == PieceType.PAWN && chesslibBoard.getEnPassantTarget() != Square.NONE
+                && to.equals(chesslibBoard.getEnPassantTarget())) {
+            int captureRow = isPlayerBlack ? toRow + 1 : toRow - 1;
+            enemyGraphicsBoard.removePieceAt(captureRow, toCol); // Remove captured pawn
+        }
         if (chesslibBoard.isMoveLegal(move, true)) {
             chesslibBoard.doMove(move);
 
@@ -409,6 +447,7 @@ public class BotBoardController {
                 }
             }
 
+
             gridPane.getChildren().clear(); // Clear the grid
             createChessBoard(); // Recreate the board with updated pieces
 
@@ -428,9 +467,6 @@ public class BotBoardController {
             System.out.println("Illegal move: " + from + " to " + to);
         }
     }
-
-
-
 
 
 
@@ -484,7 +520,7 @@ public class BotBoardController {
 
     // Method to create an ImageView for a piece based on the piece symbol
     private ImageView createPiece(String pieceSymbol) {
-        String color = pieceSymbol.substring(0, 1).equals("W") ? "white" : "black";
+        String color = pieceSymbol.charAt(0) == 'W' ? "white" : "black";
         String pieceName = switch (pieceSymbol.substring(1)) {
             case "P" -> "pawn";
             case "R" -> "rook";
@@ -509,4 +545,62 @@ public class BotBoardController {
         }
         return null;
     }
+
+    private void showPromotionPopup(Consumer<Piece> promotionCallback) {
+        // Create a new popup stage
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Choose Promotion");
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+        vbox.setAlignment(Pos.CENTER);
+
+        Label label = new Label("Choose your promotion:");
+        vbox.getChildren().add(label);
+
+        // Create buttons for each promotion option
+        Button queenButton = new Button("Queen");
+        Button knightButton = new Button("Knight");
+        Button rookButton = new Button("Rook");
+        Button bishopButton = new Button("Bishop");
+
+        // Set button actions
+        queenButton.setOnAction(e -> {
+            promotionCallback.accept(Piece.make(chesslibBoard.getSideToMove(), PieceType.QUEEN));
+            popupStage.close();
+        });
+        knightButton.setOnAction(e -> {
+            promotionCallback.accept(Piece.make(chesslibBoard.getSideToMove(), PieceType.KNIGHT));
+            popupStage.close();
+        });
+        rookButton.setOnAction(e -> {
+            promotionCallback.accept(Piece.make(chesslibBoard.getSideToMove(), PieceType.ROOK));
+            popupStage.close();
+        });
+        bishopButton.setOnAction(e -> {
+            promotionCallback.accept(Piece.make(chesslibBoard.getSideToMove(), PieceType.BISHOP));
+            popupStage.close();
+        });
+
+        vbox.getChildren().addAll(queenButton, knightButton, rookButton, bishopButton);
+
+        Scene scene = new Scene(vbox, 200, 200);
+        popupStage.setScene(scene);
+        popupStage.initModality(Modality.APPLICATION_MODAL); // Block user interaction with other windows
+        popupStage.showAndWait(); // Wait for the user to choose
+    }
+
+    private String getPieceSymbolForPromotion(Piece promotionPiece) {
+        String color = promotionPiece.getPieceSide() == Side.WHITE ? "W" : "B";
+        String pieceType = switch (promotionPiece.getPieceType()) {
+            case QUEEN -> "Q";
+            case ROOK -> "R";
+            case BISHOP -> "B";
+            case KNIGHT -> "N";
+            default -> "";
+        };
+        return color + pieceType;
+    }
+
+
 }
