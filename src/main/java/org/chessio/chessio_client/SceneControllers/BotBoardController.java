@@ -188,7 +188,7 @@ public class BotBoardController {
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 // Flip the row if the player is black
-                int displayRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row;
+                int displayRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row; // may change this
 
                 Rectangle tile = createTile(displayRow, col);
                 gridPane.add(tile, col, row);
@@ -216,7 +216,9 @@ public class BotBoardController {
 
 
     // Handle both piece and tile clicks in a unified way
-    private void handleTileOrPieceClick(int row, int col, String pieceSymbol) {
+    private void handleTileOrPieceClick(int row, int col, String pieceSymbol)
+    {
+
         if (pieceSelected) {
             // If a piece is already selected, we are attempting to move it
             onTileClicked(row, col);
@@ -345,8 +347,11 @@ public class BotBoardController {
 
     // Check if a move is legal
     private boolean isLegalMove(int fromRow, int fromCol, int toRow, int toCol) {
-        Square from = getSquare(fromRow, fromCol);
-        Square to = getSquare(toRow, toCol);
+        int adjustedFromRow = isPlayerBlack ? BOARD_SIZE - 1 - fromRow : fromRow;
+        int adjustedToRow = isPlayerBlack ? BOARD_SIZE - 1 - toRow : toRow;
+
+        Square from = getSquare(adjustedFromRow, fromCol);
+        Square to = getSquare(adjustedToRow, toCol);
         try {
             List<Move> legalMoves = MoveGenerator.generateLegalMoves(chesslibBoard);
             return legalMoves.stream().anyMatch(move -> move.getFrom().equals(from) && move.getTo().equals(to));
@@ -372,27 +377,27 @@ public class BotBoardController {
             chesslibBoard.doMove(move);
 
             // Check if the destination tile contains an enemy piece
-            String pieceSymbol = playerGraphicsBoard.getPieceAt(adjustedFromRow, fromCol);
-            String targetPieceSymbol = enemyGraphicsBoard.getPieceAt(adjustedToRow, toCol);
+            String pieceSymbol = playerGraphicsBoard.getPieceAt(fromRow, fromCol);
+            String targetPieceSymbol = enemyGraphicsBoard.getPieceAt(toRow, toCol);
 
             if (pieceSymbol != null) {
                 // Player capturing an enemy piece
                 if (targetPieceSymbol != null) {
-                    enemyGraphicsBoard.removePieceAt(adjustedToRow, toCol);
+                    enemyGraphicsBoard.removePieceAt(toRow, toCol);
                 }
-                playerGraphicsBoard.setPieceAt(adjustedToRow, toCol, pieceSymbol);
-                playerGraphicsBoard.removePieceAt(adjustedFromRow, fromCol);
+                playerGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
+                playerGraphicsBoard.removePieceAt(fromRow, fromCol);
             } else {
                 // Enemy capturing a player piece
-                pieceSymbol = enemyGraphicsBoard.getPieceAt(adjustedFromRow, fromCol);
-                String targetPlayerPiece = playerGraphicsBoard.getPieceAt(adjustedToRow, toCol);
+                pieceSymbol = enemyGraphicsBoard.getPieceAt(fromRow, fromCol);
+                String targetPlayerPiece = playerGraphicsBoard.getPieceAt(toRow, toCol);
 
                 if (pieceSymbol != null) {
                     if (targetPlayerPiece != null) {
-                        playerGraphicsBoard.removePieceAt(adjustedToRow, toCol);
+                        playerGraphicsBoard.removePieceAt(toRow, toCol);
                     }
-                    enemyGraphicsBoard.setPieceAt(adjustedToRow, toCol, pieceSymbol);
-                    enemyGraphicsBoard.removePieceAt(adjustedFromRow, fromCol);
+                    enemyGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
+                    enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
                 }
             }
 
@@ -448,7 +453,7 @@ public class BotBoardController {
     private Square getSquare(int row, int col) {
         // Flip the row when the player is black, so coordinates are correctly adjusted
         int adjustedRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row;
-        String squareName = (getColLetter(col) + (BOARD_SIZE - adjustedRow)).toUpperCase();
+        String squareName = (getColLetter(col) + (BOARD_SIZE - adjustedRow)).toUpperCase(); //may need to change here cancel board size
 
         System.out.println("Square name: " + squareName + " row: " + row + " col: " + col);
 
