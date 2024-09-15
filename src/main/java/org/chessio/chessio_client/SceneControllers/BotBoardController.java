@@ -184,36 +184,32 @@ public class BotBoardController {
     }
 
 
-    // Method to create the chessboard with pieces
     private void createChessBoard() {
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
-                // Create the tile
-                Rectangle tile = createTile(row, col);
+                // Flip the row if the player is black
+                int displayRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row;
+
+                Rectangle tile = createTile(displayRow, col);
                 gridPane.add(tile, col, row);
 
-                int displayRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row;
                 String pieceSymbol = playerGraphicsBoard.getPieceAt(displayRow, col);
                 if (pieceSymbol == null) {
                     pieceSymbol = enemyGraphicsBoard.getPieceAt(displayRow, col);
                 }
 
-                // Declare final variables to avoid issues with lambda expressions
-                final int finalRow = row;
-                final int finalCol = col;
-                final String finalPieceSymbol = pieceSymbol;
-
-                // Attach click events for both the tile and the piece
                 if (pieceSymbol != null) {
                     ImageView piece = createPiece(pieceSymbol);
                     gridPane.add(piece, col, row);
 
-                    // Piece click event
-                    piece.setOnMouseClicked(e -> handleTileOrPieceClick(finalRow, finalCol, finalPieceSymbol));
+                    int finalCol = col;
+                    String finalPieceSymbol = pieceSymbol;
+                    piece.setOnMouseClicked(e -> handleTileOrPieceClick(displayRow, finalCol, finalPieceSymbol));
                 }
 
-                // Tile click event
-                tile.setOnMouseClicked(e -> handleTileOrPieceClick(finalRow, finalCol, finalPieceSymbol));
+                int finalCol1 = col;
+                String finalPieceSymbol1 = pieceSymbol;
+                tile.setOnMouseClicked(e -> handleTileOrPieceClick(displayRow, finalCol1, finalPieceSymbol1));
             }
         }
     }
@@ -292,9 +288,12 @@ public class BotBoardController {
         createChessBoard(); // Recreate the board without any highlights
     }
 
-    // Highlight legal moves for a selected piece
     private void highlightLegalMoves(int row, int col) {
-        Square square = getSquare(row, col);
+        // Adjust row for black's perspective
+        int adjustedRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row;
+        int adjustedCol = col; // We do not need to flip columns, only rows for black
+
+        Square square = getSquare(adjustedRow, adjustedCol);
         try {
             // Generate all legal moves from the current board state
             List<Move> legalMoves = MoveGenerator.generateLegalMoves(chesslibBoard);
@@ -304,7 +303,11 @@ public class BotBoardController {
                 if (move.getFrom().equals(square)) {
                     int toRow = getRowFromUci(move.getTo().value());
                     int toCol = getColFromUci(move.getTo().value());
-                    highlightTile(toRow, toCol); // Highlight legal moves without hiding pieces
+
+                    // Adjust the target row for black's perspective
+                    //int adjustedToRow = isPlayerBlack ? BOARD_SIZE - 1 - toRow : toRow;
+
+                    highlightTile(toRow, toCol); // Highlight legal moves
                 }
             }
         } catch (Exception e) {
@@ -314,12 +317,15 @@ public class BotBoardController {
 
 
 
-    // Method to highlight tiles where the piece can move or is selected
+
     private void highlightTile(int row, int col) {
-        // Ensure row and col are within valid bounds
-        if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
+        // Adjust row for black's perspective
+        int adjustedRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row;
+
+        // Ensure adjustedRow and col are within valid bounds
+        if (adjustedRow >= 0 && adjustedRow < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
             for (javafx.scene.Node node : gridPane.getChildren()) {
-                if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col) {
+                if (GridPane.getRowIndex(node) == adjustedRow && GridPane.getColumnIndex(node) == col) {
                     if (node instanceof Rectangle) {
                         Rectangle tile = (Rectangle) node;
                         // Darken the existing background color of the tile
@@ -333,6 +339,7 @@ public class BotBoardController {
             System.err.println("Invalid tile position: row=" + row + ", col=" + col);
         }
     }
+
 
 
 
@@ -350,9 +357,14 @@ public class BotBoardController {
     }
 
     private void movePiece(int fromRow, int fromCol, int toRow, int toCol) {
+        // Adjust the row and column based on the player's color
+        int adjustedFromRow = isPlayerBlack ? BOARD_SIZE - 1 - fromRow : fromRow;
+        int adjustedToRow = isPlayerBlack ? BOARD_SIZE - 1 - toRow : toRow;
+
         System.out.println("Moving piece from " + fromRow + "," + fromCol + " to " + toRow + "," + toCol);
-        Square from = getSquare(fromRow, fromCol);
-        Square to = getSquare(toRow, toCol);
+
+        Square from = getSquare(adjustedFromRow, fromCol);
+        Square to = getSquare(adjustedToRow, toCol);
 
         // Move the piece in the chesslibBoard
         Move move = new Move(from, to);
@@ -360,44 +372,38 @@ public class BotBoardController {
             chesslibBoard.doMove(move);
 
             // Check if the destination tile contains an enemy piece
-            String pieceSymbol = playerGraphicsBoard.getPieceAt(fromRow, fromCol);
-            String targetPieceSymbol = enemyGraphicsBoard.getPieceAt(toRow, toCol);
+            String pieceSymbol = playerGraphicsBoard.getPieceAt(adjustedFromRow, fromCol);
+            String targetPieceSymbol = enemyGraphicsBoard.getPieceAt(adjustedToRow, toCol);
 
             if (pieceSymbol != null) {
-                // If the player's piece is moving, check for enemy capture
+                // Player capturing an enemy piece
                 if (targetPieceSymbol != null) {
-                    // Capture the enemy piece
-                    enemyGraphicsBoard.removePieceAt(toRow, toCol);
+                    enemyGraphicsBoard.removePieceAt(adjustedToRow, toCol);
                 }
-                // Move player's piece to the destination
-                playerGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
-                playerGraphicsBoard.removePieceAt(fromRow, fromCol);
+                playerGraphicsBoard.setPieceAt(adjustedToRow, toCol, pieceSymbol);
+                playerGraphicsBoard.removePieceAt(adjustedFromRow, fromCol);
             } else {
-                // Otherwise, it's the enemy's turn to move
-                pieceSymbol = enemyGraphicsBoard.getPieceAt(fromRow, fromCol);
-                String targetPlayerPiece = playerGraphicsBoard.getPieceAt(toRow, toCol);
+                // Enemy capturing a player piece
+                pieceSymbol = enemyGraphicsBoard.getPieceAt(adjustedFromRow, fromCol);
+                String targetPlayerPiece = playerGraphicsBoard.getPieceAt(adjustedToRow, toCol);
 
                 if (pieceSymbol != null) {
-                    // If there's a player piece at the destination, capture it
                     if (targetPlayerPiece != null) {
-                        playerGraphicsBoard.removePieceAt(toRow, toCol);
+                        playerGraphicsBoard.removePieceAt(adjustedToRow, toCol);
                     }
-                    // Move enemy's piece to the destination
-                    enemyGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
-                    enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
+                    enemyGraphicsBoard.setPieceAt(adjustedToRow, toCol, pieceSymbol);
+                    enemyGraphicsBoard.removePieceAt(adjustedFromRow, fromCol);
                 }
             }
 
-            // Clear and update the grid after the move
             gridPane.getChildren().clear(); // Clear the grid
             createChessBoard(); // Recreate the board with updated pieces
 
             // Switch the turn after a valid move
-            isPlayerTurn = !isPlayerTurn; // Toggle the turn after a move
-
+            isPlayerTurn = !isPlayerTurn;
             System.out.println(isPlayerTurn ? "Player's turn" : "Opponent's turn");
 
-            // Check if the game is over (checkmate or stalemate)
+            // Check for checkmate or stalemate
             if (chesslibBoard.isMated()) {
                 System.out.println("Checkmate! Game over.");
                 showEndGameScreen("Checkmate! You win!");
@@ -439,12 +445,12 @@ public class BotBoardController {
 
 
 
-    // Utility methods for square conversions
     private Square getSquare(int row, int col) {
-        // Convert Java row and col (0-based, top-left) to UCI coordinates (1-8, a-h).
-        String squareName = (getColLetter(col) + (BOARD_SIZE - row)).toUpperCase();
+        // Flip the row when the player is black, so coordinates are correctly adjusted
+        int adjustedRow = isPlayerBlack ? BOARD_SIZE - 1 - row : row;
+        String squareName = (getColLetter(col) + (BOARD_SIZE - adjustedRow)).toUpperCase();
 
-        System.out.println("Square name: " + squareName + " row: " + row + " col: " + col);//row and col
+        System.out.println("Square name: " + squareName + " row: " + row + " col: " + col);
 
         return Square.valueOf(squareName); // Ensure the square is in uppercase
     }
