@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.chessio.chessio_client.SceneControllers.BotBoardController">
+
+        <!-- Main HBox containing the chessboard and right-side panel -->
+        <HBox>
+                <!-- Left side is the chessboard -->
+                <GridPane fx:id="gridPane" style="-fx-padding: 0; -fx-hgap: 0; -fx-vgap: 0;" />
+
+                <!-- Right side for Bot, Username, and buttons with custom background color -->
+                <VBox alignment="CENTER" spacing="35" style="-fx-padding: 20; -fx-background-color: #F0F0F0; -fx-border-width: 2px; -fx-border-color: #D3D3D3; -fx-border-radius: 10; -fx-background-radius: 10;">
+
+                        <!-- Label showing "Bot" -->
+                        <Label text="Bot" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+                        <!-- Resign button with improved UI -->
+                        <Button fx:id="resignButton" text="Resign" style="
+                            -fx-font-size: 18px;
+                            -fx-background-color: #FF5722;
+                            -fx-text-fill: white;
+                            -fx-padding: 10 20;
+                            -fx-background-radius: 10;
+                            -fx-border-radius: 10;
+                            -fx-font-weight: bold;
+                            -fx-alignment: CENTER;
+                " onAction="#handleResignAction">
+                                <graphic>
+                                        <ImageView fx:id="resignIcon" fitHeight="30" fitWidth="30" />
+                                </graphic>
+                                <style>
+                                        .button:hover {
+                                        -fx-background-color: #E64A19;
+                                        -fx-cursor: hand;
+                                        }
+                                </style>
+                        </Button>
+
+                        <!-- Username label -->
+                        <Label fx:id="usernameLabel" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+                        <!-- Label showing "Your turn" -->
+                        <Label fx:id="turnLabel" text="Your turn" style="-fx-font-size: 18px; -fx-text-fill: #555;" />
+
+                </VBox>
+        </HBox>
+
+        <!-- End Game Overlay, initially hidden -->
+        <VBox fx:id="endGameOverlay" alignment="CENTER" spacing="20" style="-fx-background-color: rgba(0, 0, 0, 0.7); -fx-alignment: center;" visible="false" opacity="0.7">
+                <Label fx:id="endGameLabel" text="Game Over" style="-fx-font-size: 36px; -fx-text-fill: white; -fx-font-weight: bold;" />
+                <HBox alignment="CENTER" spacing="20">
+                        <Button text="Play Again" onAction="#restartGame" style="-fx-font-size: 16px; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 10 20; -fx-background-radius: 5; -fx-border-radius: 5; -fx-alignment: center;" />
+                        <Button text="Quit" onAction="#goToHomeScreen" style="-fx-font-size: 16px; -fx-background-color: #F44336; -fx-text-fill: white; -fx-padding: 10 20; -fx-background-radius: 5; -fx-border-radius: 5; -fx-alignment: center;" />
+                </HBox>
+        </VBox>
+
+</StackPane>

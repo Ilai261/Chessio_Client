@@ -62,7 +62,7 @@ public class LoginController
 
         loginTask.setOnSucceeded(event -> {
             HttpResponse<String> response = loginTask.getValue();
-            handleResponse(response);
+            handleResponse(response, username);
         });
 
         loginTask.setOnFailed(event -> {
@@ -75,7 +75,7 @@ public class LoginController
         clearFields();
     }
 
-    private void handleResponse(HttpResponse<String> response)
+    private void handleResponse(HttpResponse<String> response, String username)
     {
         String LOGIN_SUCCESSFUL = "login_successful";
         if (response.statusCode() == 200 && response.body().equals(LOGIN_SUCCESSFUL)) {
@@ -83,7 +83,19 @@ public class LoginController
             Platform.runLater(() -> {
                 try
                 {
-                    openNewScene("/org/chessio/chessio_client/home_screen.fxml");
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/home_screen.fxml"));
+                    Parent root = loader.load();
+
+                    // Get the controller and pass the selected settings
+                    HomeScreenController homeScreenController = loader.getController();
+                    homeScreenController.setUsername(username);
+
+                    // Get the current stage (instead of opening a new window)
+                    Stage stage = (Stage) loginButton.getScene().getWindow(); // Assuming 'gridPane' is a node in the current scene
+
+                    // Set the new scene in the current stage
+                    stage.setScene(new Scene(root));
+                    stage.show();
                 }
                 catch (IOException e) {
                     e.printStackTrace();

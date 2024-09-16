@@ -9,7 +9,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HomeScreenController {
+public class HomeScreenController
+{
+
+    private String username;
 
     @FXML
     void botPressed(MouseEvent event) {
@@ -23,6 +26,8 @@ public class HomeScreenController {
             SettingsController settingsController = loader.getController();
             Stage homeStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             settingsController.setHomeStage(homeStage);
+            // Get the controller and pass the username
+            settingsController.setUsername(username); // Replace "PlayerUsername" with the actual username
 
             // Open the settings screen (you can replace this with a scene change)
             Stage stage = new Stage();
@@ -44,5 +49,9 @@ public class HomeScreenController {
         // Handle quit functionality
         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
         stage.close();
+    }
+
+    void setUsername(String username) {
+        this.username = username;
     }
 }

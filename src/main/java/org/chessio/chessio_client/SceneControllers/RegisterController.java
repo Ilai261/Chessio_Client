@@ -44,7 +44,7 @@ public class RegisterController {
 
         registerTask.setOnSucceeded(event -> {
             HttpResponse<String> response = registerTask.getValue();
-            handleResponse(response);
+            handleResponse(response, username);
         });
 
         registerTask.setOnFailed(event -> {
@@ -57,7 +57,7 @@ public class RegisterController {
         clearFields();
     }
 
-    private void handleResponse(HttpResponse<String> response)
+    private void handleResponse(HttpResponse<String> response, String username)
     {
         String REGISTER_SUCCESSFUL = "registered_successfully";
         if (response.statusCode() == 200 && response.body().equals(REGISTER_SUCCESSFUL)) {
@@ -65,7 +65,19 @@ public class RegisterController {
             Platform.runLater(() -> {
                 try
                 {
-                    openNewScene("/org/chessio/chessio_client/home_screen.fxml");
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/home_screen.fxml"));
+                    Parent root = loader.load();
+
+                    // Get the controller and pass the selected settings
+                    HomeScreenController homeScreenController = loader.getController();
+                    homeScreenController.setUsername(username);
+
+                    // Get the current stage (instead of opening a new window)
+                    Stage stage = (Stage) registerButton.getScene().getWindow(); // Assuming 'gridPane' is a node in the current scene
+
+                    // Set the new scene in the current stage
+                    stage.setScene(new Scene(root));
+                    stage.show();
                 }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -90,27 +102,6 @@ public class RegisterController {
         usernameField.clear();
         passwordField.clear();
     }
-
-//    @FXML
-//    private void handleRegister() throws IOException {
-//        // Retrieve the text from the username and password fields
-//        String username = usernameField.getText();
-//        String password = passwordField.getText();
-//
-//        // Example logic for handling login (replace with your actual logic)
-//        System.out.println("Username: " + username);
-//        System.out.println("Password: " + password);
-//
-//        // Clear the text fields after login logic
-//        usernameField.clear();
-//        passwordField.clear();
-//
-//        if (username.equals("admin") && password.equals("admin")) {
-//            // Change the scene to home_screen.fxml instead of opening a new window
-//            //?We should simply use here an outside function that moves between scenes to have less code
-//            openNewScene("/org/chessio/chessio_client/home_screen.fxml");
-//        }
-//    }
 
     public void openNewScene(String fxmlFilePath) throws IOException {
         // Load the new FXML file
