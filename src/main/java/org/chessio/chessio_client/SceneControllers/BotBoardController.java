@@ -21,6 +21,7 @@ import com.github.bhlangonijr.chesslib.move.MoveGenerator;
 import java.io.*;
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class BotBoardController {
@@ -174,6 +175,14 @@ public class BotBoardController {
                 && move.getTo().equals(chesslibBoard.getEnPassantTarget())) {
             int captureRow = isPlayerBlack ? toRow + 1 : toRow - 1;
             enemyGraphicsBoard.removePieceAt(captureRow, toCol); // Remove captured pawn
+        }
+        else if (movingPiece.getPieceType() == PieceType.PAWN && (toRow == 0 || toRow == BOARD_SIZE - 1))
+        {
+            // Stockfish will automatically handle the promotion piece in the UCI
+            Piece promotionPiece = chesslibBoard.getPiece(move.getTo()); // Get the promotion piece
+            pieceSymbol = getPieceSymbolForPromotion(promotionPiece);
+            enemyGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
+            enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
         }
 
         // Remove any piece at the destination from the opponent's board
@@ -406,7 +415,7 @@ public class BotBoardController {
         Square to = getSquare(adjustedToRow, toCol);
 
         // Move the piece in the chesslibBoard
-        Move move = new Move(from, to);
+        AtomicReference<Move> move = new AtomicReference<>(new Move(from, to));
 
         // Check if the move is castling
         Piece movingPiece = chesslibBoard.getPiece(from);
@@ -419,8 +428,20 @@ public class BotBoardController {
             int captureRow = isPlayerBlack ? toRow + 1 : toRow - 1;
             enemyGraphicsBoard.removePieceAt(captureRow, toCol); // Remove captured pawn
         }
-        if (chesslibBoard.isMoveLegal(move, true)) {
-            chesslibBoard.doMove(move);
+        else if (movingPiece.getPieceType() == PieceType.PAWN && (toRow == 0 || toRow == BOARD_SIZE - 1)) {
+            // Trigger pawn promotion popup
+            showPromotionPopup((selectedPromotionPiece) -> {
+            // After the player selects a promotion piece, proceed with promotion
+            Move promotionMove = new Move(from, to, selectedPromotionPiece);
+            String pieceSymbol = getPieceSymbolForPromotion(selectedPromotionPiece);
+            playerGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
+            playerGraphicsBoard.removePieceAt(fromRow, fromCol);
+            move.set(promotionMove);
+            });
+        }
+        // if there is no special move to make
+        if (chesslibBoard.isMoveLegal(move.get(), true)) {
+            chesslibBoard.doMove(move.get());
 
             // Check if the destination tile contains an enemy piece
             String pieceSymbol = playerGraphicsBoard.getPieceAt(fromRow, fromCol);
