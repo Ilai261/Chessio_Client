@@ -79,7 +79,7 @@ public class SettingsController {
 
         // Load the ChessBoardController with the selected color and enemy level
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/chessBoard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/botChessBoard.fxml"));
             Parent root = loader.load();
 
             // Get the controller and pass the selected settings
@@ -89,7 +89,7 @@ public class SettingsController {
 
             // Open the chessboard screen
             Stage gameStage = new Stage();
-            gameStage.setTitle("Chess GraphicsBoard");
+            gameStage.setTitle("ChessBoard");
             gameStage.setScene(new Scene(root));
             gameStage.show();
         } catch (IOException e) {

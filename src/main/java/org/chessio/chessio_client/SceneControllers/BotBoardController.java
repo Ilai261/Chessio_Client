@@ -1,6 +1,7 @@
 package org.chessio.chessio_client.SceneControllers;
 
 import com.github.bhlangonijr.chesslib.*;
+import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,15 +9,19 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.chessio.chessio_client.Models.GraphicsBoard;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveGenerator;
@@ -44,6 +49,13 @@ public class BotBoardController {
 
     @FXML
     private Label usernameLabel; // For the "Username" label
+
+    @FXML
+    private VBox endGameOverlay;
+
+    @FXML
+    private Label endGameLabel;
+
 
     private static final int TILE_SIZE = 80; // Size of each tile
     private static final int BOARD_SIZE = 8; // Chessboard is 8x8
@@ -163,6 +175,7 @@ public class BotBoardController {
             }
         }
         isPlayerTurn = true; // Player's turn
+        turnLabel.setText("Your turn");
     }
 
     private void moveEnemyPiece(int fromRow, int fromCol, int toRow, int toCol, Move move) {
@@ -443,7 +456,7 @@ public class BotBoardController {
             move.set(promotionMove);
             });
         }
-        // if there is no special move to make
+        // now make the move itself
         if (chesslibBoard.isMoveLegal(move.get(), true)) {
             chesslibBoard.doMove(move.get());
 
@@ -478,6 +491,7 @@ public class BotBoardController {
 
             // Switch the turn after a valid move
             isPlayerTurn = !isPlayerTurn;
+            turnLabel.setText("Enemy turn");
             System.out.println(isPlayerTurn ? "Player's turn" : "Opponent's turn");
 
             // Check for checkmate or stalemate
@@ -492,30 +506,6 @@ public class BotBoardController {
             System.out.println("Illegal move: " + from + " to " + to);
         }
     }
-
-
-
-
-    private void showEndGameScreen(String message) {
-        // Clear the current grid and display the end game message
-        gridPane.getChildren().clear();
-
-        Label endGameLabel = new Label(message);
-        endGameLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-        gridPane.add(endGameLabel, 0, 0, BOARD_SIZE, BOARD_SIZE); // Span the label across the entire grid
-
-        // You can add more logic here to offer a "Play Again" button or exit the game
-        Button playAgainButton = new Button("Play Again");
-        playAgainButton.setOnAction(e -> restartGame());
-        gridPane.add(playAgainButton, BOARD_SIZE / 2, BOARD_SIZE / 2);
-    }
-
-    // Method to restart the game (optional, if needed)
-    private void restartGame() {
-        chesslibBoard = new com.github.bhlangonijr.chesslib.Board(); // Reset the chessboard
-        initializeGame(isPlayerBlack ? "black" : "white", 1); // Reinitialize the game
-    }
-
 
 
 
@@ -544,6 +534,7 @@ public class BotBoardController {
     }
 
     // Method to create an ImageView for a piece based on the piece symbol
+
     private ImageView createPiece(String pieceSymbol) {
         String color = pieceSymbol.charAt(0) == 'W' ? "white" : "black";
         String pieceName = switch (pieceSymbol.substring(1)) {
@@ -570,7 +561,6 @@ public class BotBoardController {
         }
         return null;
     }
-
     private void showPromotionPopup(Consumer<Piece> promotionCallback) {
         // Create a new popup stage
         Stage popupStage = new Stage();
@@ -646,11 +636,12 @@ public class BotBoardController {
         // Show the dialog and capture the user's response
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == yesButton) {
-            // If "Yes" is clicked, navigate back to the home screen
-            goToHomeScreen();
+            // If "Yes" is clicked, show end game screen
+            showEndGameScreen("You resigned...");
         }
     }
 
+    @FXML
     private void goToHomeScreen()
     {
         try {
@@ -669,5 +660,34 @@ public class BotBoardController {
 
     public void setUsername(String username) {
         usernameLabel.setText(username);
+    }
+
+    private void showEndGameScreen(String message) {
+        // Create a dimming effect on the chessboard
+        ColorAdjust dimEffect = new ColorAdjust();
+        dimEffect.setBrightness(-0.5);  // Darken the chessboard
+        gridPane.setEffect(dimEffect);
+
+        // Set the end-game message
+        endGameLabel.setText(message);
+
+        // Make the overlay visible with a fade-in transition
+        endGameOverlay.setVisible(true);
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), endGameOverlay);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
+    }
+
+    // Method to restart the game (optional, if needed)
+    @FXML
+    private void restartGame() {
+        chesslibBoard = new com.github.bhlangonijr.chesslib.Board(); // Reset the chessboard
+        initializeGame(isPlayerBlack ? "black" : "white", 1); // Reinitialize the game
+
+        // Hide the end-game overlay
+        endGameOverlay.setVisible(false);
+        // Clear the dimming effect on the chessboard
+        gridPane.setEffect(null);
     }
 }
