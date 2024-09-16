@@ -44,7 +44,7 @@ public class RegisterController {
 
         registerTask.setOnSucceeded(event -> {
             HttpResponse<String> response = registerTask.getValue();
-            handleResponse(response);
+            handleResponse(response, username);
         });
 
         registerTask.setOnFailed(event -> {
@@ -57,7 +57,7 @@ public class RegisterController {
         clearFields();
     }
 
-    private void handleResponse(HttpResponse<String> response)
+    private void handleResponse(HttpResponse<String> response, String username)
     {
         String REGISTER_SUCCESSFUL = "registered_successfully";
         if (response.statusCode() == 200 && response.body().equals(REGISTER_SUCCESSFUL)) {
@@ -65,7 +65,19 @@ public class RegisterController {
             Platform.runLater(() -> {
                 try
                 {
-                    openNewScene("/org/chessio/chessio_client/home_screen.fxml");
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/home_screen.fxml"));
+                    Parent root = loader.load();
+
+                    // Get the controller and pass the selected settings
+                    HomeScreenController homeScreenController = loader.getController();
+                    homeScreenController.setUsername(username);
+
+                    // Get the current stage (instead of opening a new window)
+                    Stage stage = (Stage) registerButton.getScene().getWindow(); // Assuming 'gridPane' is a node in the current scene
+
+                    // Set the new scene in the current stage
+                    stage.setScene(new Scene(root));
+                    stage.show();
                 }
                 catch (IOException e) {
                     e.printStackTrace();

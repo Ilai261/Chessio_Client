@@ -20,7 +20,7 @@
                 <Label text="Bot" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
 
                 <!-- Resign button with icon -->
-                <Button fx:id="resignButton" text="Resign" style="-fx-font-size: 16px;">
+                <Button fx:id="resignButton" text="Resign" style="-fx-font-size: 16px;" onAction="#handleResignAction">
                         <graphic>
                                 <ImageView fx:id="resignIcon" fitHeight="25" fitWidth="25" />
                         </graphic>

@@ -25,7 +25,10 @@ public class SettingsController {
     private Stage homeStage; // Reference to the HomeScreenController stage
 
     private String selectedColor; // To hold the selected color
+
     private int enemyLevel; // To hold the selected enemy level
+
+    private String username;
 
     // Set the home stage from HomeScreenController
     public void setHomeStage(Stage homeStage) {
@@ -82,6 +85,7 @@ public class SettingsController {
             // Get the controller and pass the selected settings
             BotBoardController chessBoardController = loader.getController();
             chessBoardController.initializeGame(selectedColor, enemyLevel); // Method to initialize the game with color and level
+            chessBoardController.setUsername(username);
 
             // Open the chessboard screen
             Stage gameStage = new Stage();
@@ -91,5 +95,10 @@ public class SettingsController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setUsername(String playerUsername)
+    {
+        this.username = playerUsername;
     }
 }

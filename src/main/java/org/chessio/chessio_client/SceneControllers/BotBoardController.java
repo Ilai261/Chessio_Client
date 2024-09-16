@@ -1,13 +1,16 @@
 package org.chessio.chessio_client.SceneControllers;
 
 import com.github.bhlangonijr.chesslib.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -21,6 +24,7 @@ import com.github.bhlangonijr.chesslib.move.MoveGenerator;
 import java.io.*;
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -624,4 +628,46 @@ public class BotBoardController {
     }
 
 
+    @FXML
+    public void handleResignAction(ActionEvent actionEvent)
+    {
+        // Create a confirmation dialog
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Resign Confirmation");
+        alert.setHeaderText("Are you sure you want to resign?");
+        alert.setContentText("You will forfeit the game.");
+
+        // Add Yes and No buttons to the dialog
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        // Show the dialog and capture the user's response
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == yesButton) {
+            // If "Yes" is clicked, navigate back to the home screen
+            goToHomeScreen();
+        }
+    }
+
+    private void goToHomeScreen()
+    {
+        try {
+            // Load the FXML file for the home screen
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/home_screen.fxml"));
+            Parent homeScreen = loader.load();
+
+            // Get the current scene and set the new root
+            Stage stage = (Stage) gridPane.getScene().getWindow(); // Assuming the gridPane is already part of the scene
+            stage.setScene(new Scene(homeScreen));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setUsername(String username) {
+        usernameLabel.setText(username);
+    }
 }
