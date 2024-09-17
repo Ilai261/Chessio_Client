@@ -140,7 +140,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>org.chessio.chessio_client/org.chessio.chessio_client.HelloApplication</mainClass>
+              <mainClass>org.chessio.chessio_client/org.chessio.chessio_client.ChessioClientApplication</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>
