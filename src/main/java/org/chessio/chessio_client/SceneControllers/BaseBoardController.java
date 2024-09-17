@@ -220,6 +220,7 @@ public abstract class BaseBoardController
         AtomicReference<String> pieceSymbol = new AtomicReference<>(playerGraphicsBoard.getPieceAt(fromRow, fromCol));
         String targetPieceSymbol = enemyGraphicsBoard.getPieceAt(toRow, toCol);
 
+        // castling
         if (movingPiece.getPieceType() == PieceType.KING && Math.abs(fromCol - toCol) == 2) {
             makeCastling(fromRow, toCol, playerGraphicsBoard);
         }
@@ -230,6 +231,7 @@ public abstract class BaseBoardController
         {
             makeEnPassant(toRow, toCol, enemyGraphicsBoard, false);
         }
+        // promotion
         else if (movingPiece.getPieceType() == PieceType.PAWN && (toRow == 0 || toRow == BOARD_SIZE - 1)) {
             // Trigger pawn promotion popup
             showPromotionPopup((selectedPromotionPiece) -> {

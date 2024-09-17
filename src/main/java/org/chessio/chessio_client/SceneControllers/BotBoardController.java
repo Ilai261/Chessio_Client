@@ -123,7 +123,8 @@ public class BotBoardController extends BaseBoardController
     // Method to restart the game
     @FXML
     @Override
-    protected void restartGame() {
+    protected void restartGame()
+    {
         chesslibBoard = new com.github.bhlangonijr.chesslib.Board(); // Reset the chessboard
         gameEnded = false;
         initializeGame(isPlayerBlack ? "black" : "white"); // Reinitialize the game
