@@ -14,6 +14,7 @@ module org.chessio.chessio_client {
     requires java.net.http;
     requires com.fasterxml.jackson.databind;
     requires chesslib;
+    requires tomcat.embed.websocket;
 
     opens org.chessio.chessio_client to javafx.fxml;
     exports org.chessio.chessio_client;

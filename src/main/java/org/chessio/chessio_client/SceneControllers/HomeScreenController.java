@@ -29,7 +29,6 @@ public class HomeScreenController
             // Get the controller and pass the username
             settingsController.setUsername(username); // Replace "PlayerUsername" with the actual username
 
-            // Open the settings screen (you can replace this with a scene change)
             Stage stage = new Stage();
             stage.setTitle("Choose Settings");
             stage.setScene(new Scene(root));
@@ -41,7 +40,23 @@ public class HomeScreenController
 
     @FXML
     void onlinePressed(MouseEvent event) {
-        // Implement logic to handle online game button press here
+        try {
+            // Load the waiting room scene
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/waitingRoom.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller and pass the username
+            WaitingRoomController waitingRoomController = loader.getController();
+            waitingRoomController.initialize(username);
+
+            // Show the waiting room scene
+            Stage stage = new Stage();
+            stage.setTitle("Waiting Room");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
