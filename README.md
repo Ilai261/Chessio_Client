@@ -1,1 +1,1 @@
-hello
+A client for playing chess.
