@@ -120,6 +120,20 @@ public class BotBoardController extends BaseBoardController
         }
     }
 
+    // Method to restart the game
+    @FXML
+    @Override
+    protected void restartGame() {
+        chesslibBoard = new com.github.bhlangonijr.chesslib.Board(); // Reset the chessboard
+        gameEnded = false;
+        initializeGame(isPlayerBlack ? "black" : "white"); // Reinitialize the game
+
+        // Hide the end-game overlay
+        endGameOverlay.setVisible(false);
+        // Clear the dimming effect on the chessboard
+        gridPane.setEffect(null);
+    }
+
     private void startStockfish() {
         try {
             // Load Stockfish from the resources folder

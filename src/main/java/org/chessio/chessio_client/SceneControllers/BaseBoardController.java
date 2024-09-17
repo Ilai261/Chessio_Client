@@ -515,23 +515,6 @@ public abstract class BaseBoardController
     @FXML
     protected abstract void handleResignAction(ActionEvent actionEvent);
 
-    @FXML
-    protected void goToHomeScreen()
-    {
-        try {
-            // Load the FXML file for the home screen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
-            Parent homeScreen = loader.load();
-
-            // Get the current scene and set the new root
-            Stage stage = (Stage) gridPane.getScene().getWindow(); // Assuming the gridPane is already part of the scene
-            stage.setScene(new Scene(homeScreen));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     protected void setUsername(String username) {
         usernameLabel.setText(username);
     }
@@ -553,22 +536,29 @@ public abstract class BaseBoardController
         fadeIn.play();
     }
 
-    // Method to restart the game (optional, if needed)
     @FXML
-    protected void restartGame() {
-        chesslibBoard = new com.github.bhlangonijr.chesslib.Board(); // Reset the chessboard
-        gameEnded = false;
-        initializeGame(isPlayerBlack ? "black" : "white"); // Reinitialize the game
+    protected void goToHomeScreen()
+    {
+        try {
+            // Load the FXML file for the home screen
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
+            Parent homeScreen = loader.load();
 
-        // Hide the end-game overlay
-        endGameOverlay.setVisible(false);
-        // Clear the dimming effect on the chessboard
-        gridPane.setEffect(null);
+            // Get the current scene and set the new root
+            Stage stage = (Stage) gridPane.getScene().getWindow(); // Assuming the gridPane is already part of the scene
+            stage.setScene(new Scene(homeScreen));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    // Method to restart the game
+    @FXML
+    protected abstract void restartGame();
 
     public void setEnemyLevel(int level)
     {
         this.enemyLevel = level;
     }
-
 }

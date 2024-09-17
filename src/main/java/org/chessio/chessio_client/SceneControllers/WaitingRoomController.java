@@ -7,9 +7,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import org.chessio.chessio_client.Configurations.AppConfig;
+import org.chessio.chessio_client.MessageHandlers.ChessioMessageHandler;
 
 import jakarta.websocket.*;
 import javafx.stage.Stage;
+import org.chessio.chessio_client.MessageHandlers.OnlineBoardChessioMessageHandler;
+import org.chessio.chessio_client.MessageHandlers.WaitingRoomChessioMessageHandler;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,7 +22,7 @@ public class WaitingRoomController {
 
     private Session session;
     private String username;
-    private boolean gameStarted = false;  // Flag to disable message handling
+    private ChessioMessageHandler chessioMessageHandler;  // Current message handler
 
     @FXML
     private Label waitingLabel;
@@ -33,12 +36,14 @@ public class WaitingRoomController {
     public void onOpen(Session session) {
         this.session = session;
         System.out.println("Connected to the server.");
+        this.chessioMessageHandler = new WaitingRoomChessioMessageHandler(this);
     }
 
     @OnMessage
     public void onMessage(String message) {
-        if (!gameStarted) {
-            Platform.runLater(() -> handleServerMessage(message));  // Handle only if game hasn't started
+        if (chessioMessageHandler != null)
+        {
+            Platform.runLater(() -> chessioMessageHandler.handleMessage(message)); // Delegate to the correct handler
         }
     }
 
@@ -47,7 +52,7 @@ public class WaitingRoomController {
         System.out.println("Connection closed: " + closeReason.getReasonPhrase());
     }
 
-    private void handleServerMessage(String message)
+    public void handleServerMessage(String message)
     {
         String[] messageParts = message.split("\\|");
 
@@ -57,8 +62,6 @@ public class WaitingRoomController {
         }
         else if (messageParts.length > 1 && messageParts[1].equals("game_start"))
         {
-            // Set the flag to stop processing further messages in this controller
-            gameStarted = true;
             // Load the game scene after disabling message handling in this controller
             loadGameScene(message);
             System.out.println("game started");
@@ -91,6 +94,9 @@ public class WaitingRoomController {
             // Pass the game start details to the chess board controller
             OnlineBoardController chessBoardController = loader.getController();
             chessBoardController.setUsername(username);
+
+            // set the game controller as the function endpoint for new messages and initialize the game
+            this.setChessioMessageHandler(new OnlineBoardChessioMessageHandler(chessBoardController));
             chessBoardController.setSession(session);
             chessBoardController.initializeGame(message);
 
@@ -102,5 +108,9 @@ public class WaitingRoomController {
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setChessioMessageHandler(ChessioMessageHandler chessioMessageHandler) {
+        this.chessioMessageHandler = chessioMessageHandler;
     }
 }

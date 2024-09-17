@@ -4,7 +4,6 @@ import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import jakarta.websocket.*;
 import org.chessio.chessio_client.Models.GraphicsBoard;
@@ -36,25 +35,7 @@ public class OnlineBoardController extends BaseBoardController {
         createChessBoard();
     }
 
-
-    @OnOpen
-    public void onOpen(Session session) {
-        this.session = session;
-        System.out.println("Connected to the server.");
-    }
-
-    @OnMessage
-    public void onMessage(String message) {
-        System.out.println("game message received: " + message);
-        Platform.runLater(() -> handleServerMessage(message));
-    }
-
-    @OnClose
-    public void onClose(Session session, CloseReason closeReason) {
-        System.out.println("Connection closed: " + closeReason.getReasonPhrase());
-    }
-
-    private void handleServerMessage(String message) {
+    public void handleServerMessage(String message) {
 
         if (false)
         {
@@ -63,7 +44,9 @@ public class OnlineBoardController extends BaseBoardController {
         else
         {
             // Handle enemy moves
-            setCurrentEnemyMoveMessage(message);
+            System.out.println("message: " + message);
+            String[] messageParts = message.split("\\|");
+            setCurrentEnemyMoveMessage(messageParts[1]);
             fetchEnemyMove();
         }
     }
@@ -135,6 +118,12 @@ public class OnlineBoardController extends BaseBoardController {
     @Override
     protected void handleResignAction(ActionEvent actionEvent) {
 
+    }
+
+    @Override
+    protected void restartGame()
+    {
+        return;
     }
 
     private String getMoveUCI(int fromRow, int fromCol, int toRow, int toCol) {
