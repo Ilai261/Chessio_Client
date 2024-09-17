@@ -4,17 +4,14 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.chessio.chessio_client.Models.LoginRequest;
 import org.chessio.chessio_client.Services.ClientHttpSender;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
-import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import org.chessio.chessio_client.JavafxUtils.JavaFXUtils;
@@ -46,7 +43,7 @@ public class LoginController
         fxmlFiles.put("Register", "register.fxml");
         fxmlFiles.put("LeaderBoard", "leaderboard.fxml");
         fxmlFiles.put("ChessBoard", "settings.fxml");
-        fxmlFiles.put("HomeScreen", "home_screen.fxml");
+        fxmlFiles.put("HomeScreen", "homeScreen.fxml");
 
         clientHttpSender = new ClientHttpSender();
     }
@@ -83,7 +80,7 @@ public class LoginController
             Platform.runLater(() -> {
                 try
                 {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/home_screen.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
                     Parent root = loader.load();
 
                     // Get the controller and pass the selected settings

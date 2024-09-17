@@ -1,9 +1,11 @@
 package org.chessio.chessio_client.SceneControllers;
 
 import javafx.event.ActionEvent;
+import javafx.scene.control.Label;
 
 public class OnlineBoardController extends BaseBoardController
 {
+
 
     @Override
     public void initializeGame(String playerColor)

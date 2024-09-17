@@ -41,6 +41,9 @@ public abstract class BaseBoardController
     protected Label usernameLabel; // For the "Username" label
 
     @FXML
+    protected Label enemyLabel;
+
+    @FXML
     protected VBox endGameOverlay;
 
     @FXML
@@ -517,7 +520,7 @@ public abstract class BaseBoardController
     {
         try {
             // Load the FXML file for the home screen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/home_screen.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
             Parent homeScreen = loader.load();
 
             // Get the current scene and set the new root
@@ -569,31 +572,3 @@ public abstract class BaseBoardController
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

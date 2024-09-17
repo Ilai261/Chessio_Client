@@ -65,7 +65,7 @@ public class RegisterController {
             Platform.runLater(() -> {
                 try
                 {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/home_screen.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
                     Parent root = loader.load();
 
                     // Get the controller and pass the selected settings
