@@ -1,6 +1,33 @@
 package org.chessio.chessio_client.SceneControllers;
 
-public class OnlineBoardController
+import javafx.event.ActionEvent;
+import javafx.scene.control.Label;
+
+public class OnlineBoardController extends BaseBoardController
 {
 
+
+    @Override
+    public void initializeGame(String playerColor)
+    {
+
+    }
+
+    @Override
+    protected void onTileClicked(int row, int col)
+    {
+
+    }
+
+    @Override
+    protected void fetchEnemyMove()
+    {
+
+    }
+
+    @Override
+    protected void handleResignAction(ActionEvent actionEvent)
+    {
+
+    }
 }

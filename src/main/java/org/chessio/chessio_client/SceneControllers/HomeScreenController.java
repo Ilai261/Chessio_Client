@@ -19,7 +19,7 @@ public class HomeScreenController
 
         try {
             // Open the settings screen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/choose_settings.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/chooseSettings.fxml"));
             Parent root = loader.load();
 
             // Pass the HomeScreen stage to the SettingsController

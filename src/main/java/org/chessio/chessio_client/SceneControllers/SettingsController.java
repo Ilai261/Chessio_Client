@@ -84,8 +84,9 @@ public class SettingsController {
 
             // Get the controller and pass the selected settings
             BotBoardController chessBoardController = loader.getController();
-            chessBoardController.initializeGame(selectedColor, enemyLevel); // Method to initialize the game with color and level
+            chessBoardController.setEnemyLevel(enemyLevel);
             chessBoardController.setUsername(username);
+            chessBoardController.initializeGame(selectedColor); // Method to initialize the game with color and level
 
             // Open the chessboard screen
             Stage gameStage = new Stage();

@@ -19,7 +19,7 @@
                 <VBox alignment="CENTER" spacing="35" style="-fx-padding: 20; -fx-background-color: #F0F0F0; -fx-border-width: 2px; -fx-border-color: #D3D3D3; -fx-border-radius: 10; -fx-background-radius: 10;">
 
                         <!-- Label showing "Bot" -->
-                        <Label text="Bot" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+                        <Label fx:id="enemyLabel" text="Bot" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
 
                         <!-- Resign button with improved UI -->
                         <Button fx:id="resignButton" text="Resign" style="
