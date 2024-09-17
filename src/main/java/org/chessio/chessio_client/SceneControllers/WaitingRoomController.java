@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import org.chessio.chessio_client.Configurations.AppConfig;
 
 import jakarta.websocket.*;
 import javafx.stage.Stage;
@@ -18,6 +19,7 @@ public class WaitingRoomController {
 
     private Session session;
     private String username;
+    private boolean gameStarted = false;  // Flag to disable message handling
 
     @FXML
     private Label waitingLabel;
@@ -35,7 +37,9 @@ public class WaitingRoomController {
 
     @OnMessage
     public void onMessage(String message) {
-        Platform.runLater(() -> handleServerMessage(message));
+        if (!gameStarted) {
+            Platform.runLater(() -> handleServerMessage(message));  // Handle only if game hasn't started
+        }
     }
 
     @OnClose
@@ -43,19 +47,37 @@ public class WaitingRoomController {
         System.out.println("Connection closed: " + closeReason.getReasonPhrase());
     }
 
-    private void handleServerMessage(String message) {
-        if (message.startsWith("game_start")) {
-            // Game is starting, load the chessboard scene and pass the message details
+    private void handleServerMessage(String message)
+    {
+        String[] messageParts = message.split("\\|");
+
+        if(messageParts.length > 0 && messageParts[0].equals("waiting_for_opponent"))
+        {
+            System.out.println("Waiting for opponent");
+        }
+        else if (messageParts.length > 1 && messageParts[1].equals("game_start"))
+        {
+            // Set the flag to stop processing further messages in this controller
+            gameStarted = true;
+            // Load the game scene after disabling message handling in this controller
             loadGameScene(message);
+            System.out.println("game started");
+        }
+        else
+        {
+            System.out.println("Invalid message: " + message);
         }
     }
 
     private void connectToServer() {
-        try {
+        try
+        {
+            String baseurl = "ws://" + AppConfig.getServerAddress() + ":" + AppConfig.getServerPort();
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            URI uri = new URI("ws://localhost:8080/game");
+            URI uri = new URI(baseurl + "/game");
             container.connectToServer(this, uri);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -68,6 +90,8 @@ public class WaitingRoomController {
 
             // Pass the game start details to the chess board controller
             OnlineBoardController chessBoardController = loader.getController();
+            chessBoardController.setUsername(username);
+            chessBoardController.setSession(session);
             chessBoardController.initializeGame(message);
 
             // Switch the scene to the chess game

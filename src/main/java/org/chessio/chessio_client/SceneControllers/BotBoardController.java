@@ -32,6 +32,7 @@ public class BotBoardController extends BaseBoardController
         setStockfishLevel(this.enemyLevel);  // Set Stockfish level
         if (!isPlayerTurn)
         {
+            turnLabel.setText("Enemy turn");
             fetchEnemyMove();
         }
     }
