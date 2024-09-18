@@ -43,6 +43,25 @@
                 </style>
             </Button>
 
+            <!-- Draw Offer button with improved UI -->
+            <Button fx:id="drawOfferButton" text="Offer Draw" style="
+                            -fx-font-size: 18px;
+                            -fx-background-color: #2196F3;
+                            -fx-text-fill: white;
+                            -fx-padding: 10 20;
+                            -fx-background-radius: 10;
+                            -fx-border-radius: 10;
+                            -fx-font-weight: bold;
+                            -fx-alignment: CENTER;
+                " onAction="#onDrawOffer">
+                <style>
+                    .button:hover {
+                    -fx-background-color: #1976D2;
+                    -fx-cursor: hand;
+                    }
+                </style>
+            </Button>
+
             <!-- Username label -->
             <Label fx:id="usernameLabel" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
 
@@ -56,9 +75,9 @@
     <VBox fx:id="endGameOverlay" alignment="CENTER" spacing="20" style="-fx-background-color: rgba(0, 0, 0, 0.7); -fx-alignment: center;" visible="false" opacity="0.7">
         <Label fx:id="endGameLabel" text="Game Over" style="-fx-font-size: 36px; -fx-text-fill: white; -fx-font-weight: bold;" />
         <HBox alignment="CENTER" spacing="20">
-            <Button text="Play Again" onAction="#restartGame" style="-fx-font-size: 16px; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 10 20; -fx-background-radius: 5; -fx-border-radius: 5; -fx-alignment: center;" />
             <Button text="Quit" onAction="#goToHomeScreen" style="-fx-font-size: 16px; -fx-background-color: #F44336; -fx-text-fill: white; -fx-padding: 10 20; -fx-background-radius: 5; -fx-border-radius: 5; -fx-alignment: center;" />
         </HBox>
     </VBox>
 
 </StackPane>
+

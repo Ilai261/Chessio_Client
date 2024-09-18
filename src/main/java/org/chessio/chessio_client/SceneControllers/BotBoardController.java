@@ -3,7 +3,11 @@ package org.chessio.chessio_client.SceneControllers;
 import com.github.bhlangonijr.chesslib.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import org.chessio.chessio_client.Models.GraphicsBoard;
 import com.github.bhlangonijr.chesslib.move.Move;
 
@@ -117,6 +121,26 @@ public class BotBoardController extends BaseBoardController
             // If "Yes" is clicked, show end game screen
             showEndGameScreen("You resigned...");
             gameEnded = true;
+        }
+    }
+
+    @Override
+    protected void goToHomeScreen() {
+        try {
+            // Load the FXML file for the home screen
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
+            Parent homeScreen = loader.load();
+
+            // set the username
+            HomeScreenController waitingRoomController = loader.getController();
+            waitingRoomController.setUsername(username);
+
+            // Get the current scene and set the new root
+            Stage stage = (Stage) gridPane.getScene().getWindow(); // Assuming the gridPane is already part of the scene
+            stage.setScene(new Scene(homeScreen));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

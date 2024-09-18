@@ -550,21 +550,7 @@ public abstract class BaseBoardController
     }
 
     @FXML
-    protected void goToHomeScreen()
-    {
-        try {
-            // Load the FXML file for the home screen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
-            Parent homeScreen = loader.load();
-
-            // Get the current scene and set the new root
-            Stage stage = (Stage) gridPane.getScene().getWindow(); // Assuming the gridPane is already part of the scene
-            stage.setScene(new Scene(homeScreen));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    protected abstract void goToHomeScreen();
 
     // Method to restart the game
     @FXML
