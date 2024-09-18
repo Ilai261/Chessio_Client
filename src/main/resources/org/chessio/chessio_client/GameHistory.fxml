@@ -1,17 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.chessio.chessio_client.SceneControllers.GameHistoryController" spacing="10" alignment="CENTER">
 
-    <TableView fx:id="leaderboardTable" prefWidth="300">
-        <columns>
-            <TableColumn text="Rank" prefWidth="100"/>
-            <TableColumn text="Player Name" prefWidth="200"/>
-        </columns>
-    </TableView>
+    <!-- Button to go back to the home screen -->
+    <Button fx:id="backToHomeButton" text="Back to Home Screen" style="
+                            -fx-font-size: 18px;
+                            -fx-background-color: #FF5722;
+                            -fx-text-fill: white;
+                            -fx-padding: 10 20;
+                            -fx-background-radius: 10;
+                            -fx-border-radius: 10;
+                            -fx-font-weight: bold;
+                            -fx-alignment: CENTER_LEFT;
+                            " onAction="#handleBackToHomeAction"/>
+
+    <!-- ScrollPane to make the table scrollable if needed -->
+    <ScrollPane fitToWidth="true" fitToHeight="true">
+        <TableView fx:id="leaderboardTable" prefWidth="400">
+            <columns>
+                <TableColumn fx:id="player1Column" text="Player 1" prefWidth="150"/>
+                <TableColumn fx:id="player2Column" text="Player 2" prefWidth="150"/>
+                <TableColumn fx:id="winnerColumn" text="Winner" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </ScrollPane>
 
 </VBox>
