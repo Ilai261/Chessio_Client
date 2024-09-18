@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.Scene;
@@ -52,6 +53,17 @@ public class LoginController
     private void handleLogin() {
         String username = usernameField.getText();
         String password = passwordField.getText();
+
+        // make a check to see if one of the fields is empty
+        if(username.isEmpty() || password.isEmpty())
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("no username or password entered!");
+            alert.setHeaderText(null);
+            alert.setContentText("enter both fields to register...");
+            alert.showAndWait();
+            return;
+        }
 
         LoginRequest loginRequest = new LoginRequest(username, password);
 

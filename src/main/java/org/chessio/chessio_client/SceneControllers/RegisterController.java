@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -14,6 +15,8 @@ import org.chessio.chessio_client.Services.ClientHttpSender;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+
+import static org.chessio.chessio_client.JavafxUtils.JavaFXUtils.createAlert;
 
 public class RegisterController {
 
@@ -37,6 +40,17 @@ public class RegisterController {
     private void handleRegister() {
         String username = usernameField.getText();
         String password = passwordField.getText();
+
+        // make a check to see if one of the fields is empty
+        if(username.isEmpty() || password.isEmpty())
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("no username or password entered!");
+            alert.setHeaderText(null);
+            alert.setContentText("enter both fields to register...");
+            alert.showAndWait();
+            return;
+        }
 
         RegistrationRequest registrationRequest = new RegistrationRequest(username, password);
 
@@ -87,7 +101,7 @@ public class RegisterController {
         }
         else
         {
-            JavaFXUtils.createAlert(response);
+            createAlert(response);
             System.out.println("Registration failed: " + response.body());
         }
     }
