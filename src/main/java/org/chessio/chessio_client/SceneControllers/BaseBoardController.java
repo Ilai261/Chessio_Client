@@ -24,6 +24,7 @@ import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveGenerator;
 
 import java.io.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -63,6 +64,9 @@ public abstract class BaseBoardController
     protected Board chesslibBoard = new Board();
     protected int enemyLevel;
     protected boolean gameEnded = false;
+    protected String gameResult;
+    protected String username;
+    protected String playerPromotionValue = null;
 
     // Initialize the game and start Stockfish process
     public abstract void initializeGame(String playerColor);
@@ -220,6 +224,7 @@ public abstract class BaseBoardController
         AtomicReference<String> pieceSymbol = new AtomicReference<>(playerGraphicsBoard.getPieceAt(fromRow, fromCol));
         String targetPieceSymbol = enemyGraphicsBoard.getPieceAt(toRow, toCol);
 
+        // castling
         if (movingPiece.getPieceType() == PieceType.KING && Math.abs(fromCol - toCol) == 2) {
             makeCastling(fromRow, toCol, playerGraphicsBoard);
         }
@@ -230,6 +235,7 @@ public abstract class BaseBoardController
         {
             makeEnPassant(toRow, toCol, enemyGraphicsBoard, false);
         }
+        // promotion
         else if (movingPiece.getPieceType() == PieceType.PAWN && (toRow == 0 || toRow == BOARD_SIZE - 1)) {
             // Trigger pawn promotion popup
             showPromotionPopup((selectedPromotionPiece) -> {
@@ -335,7 +341,9 @@ public abstract class BaseBoardController
 
     protected String makePawnPromotion(Piece promotionPiece)
     {
-        return getPieceSymbolForPromotion(promotionPiece);
+        String symbol = getPieceSymbolForPromotion(promotionPiece);
+        this.playerPromotionValue = symbol.substring(1,2).toLowerCase();
+        return symbol;
     }
 
     // Function to return the correct Piece object for promotion
@@ -373,29 +381,34 @@ public abstract class BaseBoardController
                 System.out.println("Checkmate! You win!");
                 showEndGameScreen("Checkmate! You win!");
             }
+
+            if(currentSide == Side.BLACK) {
+                gameResult = "white_win";
+            }
+            else
+            {
+                gameResult = "black_win";
+            }
         }
-        else if (chesslibBoard.isStaleMate()) {
-            System.out.println("Stalemate! Game over.");
-            gameEnded = true;
-            showEndGameScreen("Stalemate! It's a draw.");
-        }
-        else if (chesslibBoard.isRepetition())
-        {
-            System.out.println("Repetition! Game over.");
-            gameEnded = true;
-            showEndGameScreen("Repetition! It's a draw.");
-        }
-        else if(chesslibBoard.isInsufficientMaterial())
-        {
-            System.out.println("Insufficient material! Game over.");
-            gameEnded = true;
-            showEndGameScreen("Insufficient material! It's a draw.");
-        }
-        else if (chesslibBoard.getHalfMoveCounter() >= 100)
-        {
-            System.out.println("50 moves with no captures and no pawn moves! Game over.");
-            gameEnded = true;
-            showEndGameScreen("Game over! it's a draw (50 moves rule).");
+        else {
+            gameResult = "draw";
+            if (chesslibBoard.isStaleMate()) {
+                System.out.println("Stalemate! Game over.");
+                gameEnded = true;
+                showEndGameScreen("Stalemate! It's a draw.");
+            } else if (chesslibBoard.isRepetition()) {
+                System.out.println("Repetition! Game over.");
+                gameEnded = true;
+                showEndGameScreen("Repetition! It's a draw.");
+            } else if (chesslibBoard.isInsufficientMaterial()) {
+                System.out.println("Insufficient material! Game over.");
+                gameEnded = true;
+                showEndGameScreen("Insufficient material! It's a draw.");
+            } else if (chesslibBoard.getHalfMoveCounter() >= 100) {
+                System.out.println("50 moves with no captures and no pawn moves! Game over.");
+                gameEnded = true;
+                showEndGameScreen("Game over! it's a draw (50 moves rule).");
+            }
         }
     }
 
@@ -515,24 +528,7 @@ public abstract class BaseBoardController
     @FXML
     protected abstract void handleResignAction(ActionEvent actionEvent);
 
-    @FXML
-    protected void goToHomeScreen()
-    {
-        try {
-            // Load the FXML file for the home screen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
-            Parent homeScreen = loader.load();
-
-            // Get the current scene and set the new root
-            Stage stage = (Stage) gridPane.getScene().getWindow(); // Assuming the gridPane is already part of the scene
-            stage.setScene(new Scene(homeScreen));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void setUsername(String username) {
+    protected void setUsernameLabel(String username) {
         usernameLabel.setText(username);
     }
 
@@ -553,22 +549,34 @@ public abstract class BaseBoardController
         fadeIn.play();
     }
 
-    // Method to restart the game (optional, if needed)
     @FXML
-    protected void restartGame() {
-        chesslibBoard = new com.github.bhlangonijr.chesslib.Board(); // Reset the chessboard
-        gameEnded = false;
-        initializeGame(isPlayerBlack ? "black" : "white"); // Reinitialize the game
+    protected void goToHomeScreen()
+    {
+        try {
+            // Load the FXML file for the home screen
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
+            Parent homeScreen = loader.load();
 
-        // Hide the end-game overlay
-        endGameOverlay.setVisible(false);
-        // Clear the dimming effect on the chessboard
-        gridPane.setEffect(null);
+            // Get the current scene and set the new root
+            Stage stage = (Stage) gridPane.getScene().getWindow(); // Assuming the gridPane is already part of the scene
+            stage.setScene(new Scene(homeScreen));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    // Method to restart the game
+    @FXML
+    protected abstract void restartGame();
 
     public void setEnemyLevel(int level)
     {
         this.enemyLevel = level;
     }
 
+    public void setUsername(String username)
+    {
+        this.username = username;
+    }
 }

@@ -32,6 +32,7 @@ public class BotBoardController extends BaseBoardController
         setStockfishLevel(this.enemyLevel);  // Set Stockfish level
         if (!isPlayerTurn)
         {
+            turnLabel.setText("Enemy turn");
             fetchEnemyMove();
         }
     }
@@ -117,6 +118,21 @@ public class BotBoardController extends BaseBoardController
             showEndGameScreen("You resigned...");
             gameEnded = true;
         }
+    }
+
+    // Method to restart the game
+    @FXML
+    @Override
+    protected void restartGame()
+    {
+        chesslibBoard = new com.github.bhlangonijr.chesslib.Board(); // Reset the chessboard
+        gameEnded = false;
+        initializeGame(isPlayerBlack ? "black" : "white"); // Reinitialize the game
+
+        // Hide the end-game overlay
+        endGameOverlay.setVisible(false);
+        // Clear the dimming effect on the chessboard
+        gridPane.setEffect(null);
     }
 
     private void startStockfish() {
