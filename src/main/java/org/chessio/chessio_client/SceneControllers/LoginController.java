@@ -41,7 +41,7 @@ public class LoginController
         fxmlFiles = new HashMap<>();
         fxmlFiles.put("Login", "login.fxml");
         fxmlFiles.put("Register", "register.fxml");
-        fxmlFiles.put("LeaderBoard", "leaderboard.fxml");
+        fxmlFiles.put("LeaderBoard", "GameHistory.fxml");
         fxmlFiles.put("ChessBoard", "settings.fxml");
         fxmlFiles.put("HomeScreen", "homeScreen.fxml");
 

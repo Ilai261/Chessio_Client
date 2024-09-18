@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.chessio.chessio_client.SceneControllers.LeaderboardController" spacing="10" alignment="CENTER">
+      fx:controller="org.chessio.chessio_client.SceneControllers.GameHistoryController" spacing="10" alignment="CENTER">
 
     <TableView fx:id="leaderboardTable" prefWidth="300">
         <columns>

@@ -155,18 +155,14 @@ public class WaitingRoomController {
     // Method to start rotating the waiting icon
     private void startWaitingAnimation() {
         Image image = new Image(Objects.requireNonNull(getClass().getResource("/org/chessio/chessio_client/Icons/wait.png")).toExternalForm());
-
         waitingIcon.setImage(image);
-
         // Initialize the start time
         startTimeMillis = System.currentTimeMillis();
-
         // Set up the rotation animation (180 degrees every 100 ms)
         rotateTransition = new RotateTransition(Duration.millis(800), waitingIcon);
         rotateTransition.setByAngle(180);
         rotateTransition.setCycleCount(Animation.INDEFINITE);  // Keep rotating
         rotateTransition.play();
-
         // Set up the timeline to update the elapsed time every second
         timer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             long elapsedSeconds = (System.currentTimeMillis() - startTimeMillis) / 1000;

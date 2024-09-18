@@ -3,7 +3,7 @@ package org.chessio.chessio_client.SceneControllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 
-public class LeaderboardController {
+public class GameHistoryController {
 
     @FXML
     private TableView<?> leaderboardTable;
