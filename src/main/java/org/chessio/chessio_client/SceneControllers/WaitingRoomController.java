@@ -37,6 +37,14 @@ public class WaitingRoomController {
         this.session = session;
         System.out.println("Connected to the server.");
         this.chessioMessageHandler = new WaitingRoomChessioMessageHandler(this);
+
+        // Send the username to the server when the connection is established
+        String usernameMessage = "username|" + username;
+        try {
+            session.getBasicRemote().sendText(usernameMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnMessage
@@ -94,6 +102,7 @@ public class WaitingRoomController {
             // Pass the game start details to the chess board controller
             OnlineBoardController chessBoardController = loader.getController();
             chessBoardController.setUsername(username);
+            chessBoardController.setUsernameLabel(username);
 
             // set the game controller as the function endpoint for new messages and initialize the game
             this.setChessioMessageHandler(new OnlineBoardChessioMessageHandler(chessBoardController));
@@ -112,5 +121,10 @@ public class WaitingRoomController {
 
     private void setChessioMessageHandler(ChessioMessageHandler chessioMessageHandler) {
         this.chessioMessageHandler = chessioMessageHandler;
+    }
+
+    public void setUsername(String username)
+    {
+        this.username = username;
     }
 }

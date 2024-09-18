@@ -3,11 +3,13 @@ package org.chessio.chessio_client.SceneControllers;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
+import com.github.bhlangonijr.chesslib.game.GameResult;
 import com.github.bhlangonijr.chesslib.move.Move;
 import javafx.event.ActionEvent;
 import jakarta.websocket.*;
 import org.chessio.chessio_client.Models.GraphicsBoard;
 
+import java.util.List;
 import java.util.UUID;
 
 @ClientEndpoint
@@ -67,6 +69,9 @@ public class OnlineBoardController extends BaseBoardController {
             {
                 String message = gameId + "|" + move;
                 session.getBasicRemote().sendText(message);
+                if(gameEnded) {
+                    sendResult(gameResult);
+                }
             }
             catch (Exception e)
             {
@@ -126,11 +131,31 @@ public class OnlineBoardController extends BaseBoardController {
         return;
     }
 
+    private void sendResult(String gameResult)
+    {
+        try {
+            String resultMessage = "game_over|" + gameResult + "|" + gameId;
+            session.getBasicRemote().sendText(resultMessage);
+            System.out.println("gameEnded message sent: " + resultMessage);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     private String getMoveUCI(int fromRow, int fromCol, int toRow, int toCol) {
         // Convert to UCI format (e.g., "e2e4")
         String from = getColLetter(fromCol) + (8 - fromRow);
         String to = getColLetter(toCol) + (8 - toRow);
-        return from + to;
+        // check for pawn promotion to add to the UCI move representation
+        String UCIMove = from + to;
+        if(playerPromotionValue != null)
+        {
+            UCIMove += playerPromotionValue;
+            playerPromotionValue = null;
+        }
+        return UCIMove;
     }
 
     public void setSession(Session session) {
