@@ -3,14 +3,23 @@ package org.chessio.chessio_client.SceneControllers;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
-import com.github.bhlangonijr.chesslib.game.GameResult;
 import com.github.bhlangonijr.chesslib.move.Move;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import jakarta.websocket.*;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.chessio.chessio_client.Models.GraphicsBoard;
 
-import java.util.List;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 
 @ClientEndpoint
 public class OnlineBoardController extends BaseBoardController {
@@ -18,6 +27,7 @@ public class OnlineBoardController extends BaseBoardController {
     private Session session;
     private String currentEnemyMoveMessage;
     private UUID gameId;
+    private boolean canOfferDraw = true;  // Flag to track draw offer cooldown
 
     @Override
     public void initializeGame(String gameStartMessage)
@@ -26,6 +36,7 @@ public class OnlineBoardController extends BaseBoardController {
 
         gameId = UUID.fromString(parts[0]);
         isPlayerBlack = parts[2].equals("black");
+        enemyLabel.setText(parts[3]);
         playerGraphicsBoard = new GraphicsBoard(isPlayerBlack ? "black" : "white");
         enemyGraphicsBoard = new GraphicsBoard(isPlayerBlack ? "white" : "black");
 
@@ -35,19 +46,43 @@ public class OnlineBoardController extends BaseBoardController {
 
         // Set up the board and begin the game
         createChessBoard();
+
+        // Add listener to the GridPane's scene property to ensure it's set before accessing the window
+        Platform.runLater(() -> {
+            Stage stage = (Stage) gridPane.getScene().getWindow();
+            if (stage != null) {
+                // Handle window close event
+                stage.setOnCloseRequest(this::handleWindowClose);
+            } else {
+                System.out.println("Stage is not yet available.");
+            }
+        });
     }
 
-    public void handleServerMessage(String message) {
+    public void handleServerMessage(String message)
+    {
+        System.out.println("message for debug: " + message); // remove later
+        String[] messageParts = message.split("\\|");
 
-        if (false)
+        if (messageParts.length <= 1)
         {
-
+            System.out.println("information message or an error: " + message);
+        }
+        else if(messageParts[0].equals("draw_offer")) {
+            showDrawOfferPopup();
+        }
+        else if (messageParts[0].equals("draw_offer_accepted")) {
+            handleDrawAccepted();
+        }
+        else if(messageParts[0].equals("draw_offer_rejected")) {
+            handleDrawRejected();
+        }
+        else if(messageParts[0].equals("enemy_resigned")) {
+            handleEnemyResigned();
         }
         else
         {
-            // Handle enemy moves
-            System.out.println("message: " + message);
-            String[] messageParts = message.split("\\|");
+            // if it's a normal move message
             setCurrentEnemyMoveMessage(messageParts[1]);
             fetchEnemyMove();
         }
@@ -121,8 +156,86 @@ public class OnlineBoardController extends BaseBoardController {
     }
 
     @Override
-    protected void handleResignAction(ActionEvent actionEvent) {
+    protected void handleResignAction(ActionEvent actionEvent)
+    {
 
+        // Create a confirmation dialog
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Resign Confirmation");
+        alert.setHeaderText("Are you sure you want to resign?");
+        alert.setContentText("You will forfeit the game.");
+
+        // Add Yes and No buttons to the dialog
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        // Show the dialog and capture the user's response
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == yesButton)
+        {
+            // if yes is clicked
+            try
+            {
+                gameResult = isPlayerBlack ? "white_win" : "black_win";
+                String resignationMessage = "resignation|" + gameResult + "|" + gameId;
+                session.getBasicRemote().sendText(resignationMessage);
+                System.out.println("You resigned and the game has ended in your loss");
+
+                // logic after resignation
+                gameEnded = true;
+                showEndGameScreen("You resigned...");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void goToHomeScreen()
+    {
+        try
+        {
+            // close the session when exiting to home screen
+            if (session != null && session.isOpen()) {
+                session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "User quit the game"));
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        try
+        {
+            // Load the FXML file for the home screen
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
+            Parent homeScreen = loader.load();
+
+            // set the username
+            HomeScreenController waitingRoomController = loader.getController();
+            waitingRoomController.setUsername(username);
+
+            // Get the current scene and set the new root
+            Stage stage = (Stage) gridPane.getScene().getWindow();
+            // cancel the "x" button listener, as we are not going to be in an online game anymore
+            if (stage != null)
+            {
+                // Remove the "X" button listener by setting it to null
+                stage.setOnCloseRequest(null);
+                stage.setScene(new Scene(homeScreen));
+                stage.show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleEnemyResigned()
+    {
+        gameEnded = true;
+        gameResult = isPlayerBlack ? "black_win" : "white_win";
+        showEndGameScreen("You won! " + enemyLabel.getText() + " has resigned...");
     }
 
     @Override
@@ -130,6 +243,109 @@ public class OnlineBoardController extends BaseBoardController {
     {
         return;
     }
+
+    @FXML
+    private void onDrawOffer()
+    {
+        if (!canOfferDraw) {
+            showCooldownAlert();
+            return;
+        }
+
+        // Send draw offer to the opponent
+        try {
+            String drawOfferMessage = "draw_offer|" + gameId;
+            session.getBasicRemote().sendText(drawOfferMessage);
+            System.out.println("Draw offer sent to opponent");
+
+            // Set cooldown and disable draw offer for 1 minute
+            canOfferDraw = false;
+
+            // Start a cooldown timer of 60 seconds
+            startDrawCooldownTimer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startDrawCooldownTimer() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                canOfferDraw = true;
+            }
+        }, 60 * 1000);  // 1-minute cooldown
+    }
+
+    private void showCooldownAlert() {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Cooldown");
+            alert.setHeaderText(null);
+            alert.setContentText("You can only offer a draw every 1 minute.");
+            alert.showAndWait();
+        });
+    }
+
+    private void showDrawOfferPopup() {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Draw Offer");
+            alert.setHeaderText("Your opponent has offered a draw.");
+            alert.setContentText("Do you accept the draw offer?");
+
+            ButtonType acceptButton = new ButtonType("Accept");
+            ButtonType rejectButton = new ButtonType("Reject", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(acceptButton, rejectButton);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == acceptButton) {
+                acceptDrawOffer();
+            } else {
+                rejectDrawOffer();
+            }
+        });
+    }
+
+    private void acceptDrawOffer() {
+        try {
+            String drawAcceptedMessage = "draw_offer_accepted|" + gameId;
+            session.getBasicRemote().sendText(drawAcceptedMessage);
+            System.out.println("Draw offer accepted and game ended as draw");
+            handleDrawAccepted();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void rejectDrawOffer() {
+        try {
+            String rejectMessage = "draw_offer_rejected|" + gameId;
+            session.getBasicRemote().sendText(rejectMessage);
+            System.out.println("Draw offer rejected");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleDrawAccepted()
+    {
+        gameEnded = true;
+        gameResult = "draw";
+        showEndGameScreen("draw offer accepted! It's a draw.");
+    }
+
+    private void handleDrawRejected()
+    {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Draw Rejected");
+            alert.setHeaderText(null);
+            alert.setContentText(enemyLabel.getText() + " has rejected your draw offer.");
+            alert.showAndWait();
+        });
+    }
+
 
     private void sendResult(String gameResult)
     {
@@ -156,6 +372,39 @@ public class OnlineBoardController extends BaseBoardController {
             playerPromotionValue = null;
         }
         return UCIMove;
+    }
+
+    // Method to handle window close event
+    private void handleWindowClose(WindowEvent event) {
+        // Example: Ask for confirmation before closing
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Exit");
+        alert.setHeaderText("You're about to exit the game.");
+        alert.setContentText("Are you sure you want to exit? You will automatically lose this game.");
+
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == yesButton) {
+            // Close the session and clean up resources before exiting
+            try {
+                // game ending logic sent to the server
+                gameResult = isPlayerBlack ? "white_win" : "black_win";
+                String resignationMessage = "resignation|" + gameResult + "|" + gameId;
+                session.getBasicRemote().sendText(resignationMessage);
+
+                // close the session and the app
+                session.close();
+                Platform.exit();  // Close the application
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Prevent the window from closing
+            event.consume();
+        }
     }
 
     public void setSession(Session session) {

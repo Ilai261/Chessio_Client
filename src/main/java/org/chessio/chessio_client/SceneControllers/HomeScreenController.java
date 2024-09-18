@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.IOException;
 public class HomeScreenController
 {
 
+    public AnchorPane anchorPane;
     private String username;
 
     @FXML
@@ -43,16 +45,15 @@ public class HomeScreenController
         try {
             // Load the waiting room scene
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/waitingRoom.fxml"));
-            Parent root = loader.load();
+            Parent waitingRoom = loader.load();
 
             // Get the controller and pass the username
             WaitingRoomController waitingRoomController = loader.getController();
             waitingRoomController.initialize(username);
 
             // Show the waiting room scene
-            Stage stage = new Stage();
-            stage.setTitle("Waiting Room");
-            stage.setScene(new Scene(root));
+            Stage stage = (Stage) anchorPane.getScene().getWindow(); // Assuming the gridPane is already part of the scene
+            stage.setScene(new Scene(waitingRoom));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

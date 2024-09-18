@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="421.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.SceneControllers.HomeScreenController">
+<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="421.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.SceneControllers.HomeScreenController">
     <children>
         <!-- Title Label -->
         <Label layoutX="177.0" layoutY="42.0" prefHeight="28.0" prefWidth="140.0" text="Let's Play!" />

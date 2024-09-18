@@ -38,7 +38,7 @@ public class WaitingRoomController {
         System.out.println("Connected to the server.");
         this.chessioMessageHandler = new WaitingRoomChessioMessageHandler(this);
 
-        // Send the username to the server when the connection is established
+        // Send the username to the server when a connection is made
         String usernameMessage = "username|" + username;
         try {
             session.getBasicRemote().sendText(usernameMessage);
