@@ -4,6 +4,8 @@ public class GameHistoryRequest
 {
     private String userName;
 
+    public GameHistoryRequest() {}
+
     public GameHistoryRequest(String userName)
     {
         this.userName = userName;

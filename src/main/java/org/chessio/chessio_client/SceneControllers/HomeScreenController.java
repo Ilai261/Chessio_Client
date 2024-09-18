@@ -78,11 +78,15 @@ public class HomeScreenController
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/GameHistory.fxml"));
             Parent gameHistory = loader.load();
 
+            GameHistoryController gameHistoryController = loader.getController();
+            gameHistoryController.initialize(username);
+
             // Close the current HomeScreen and open GameHistory in the same window
             Stage stage = (Stage) anchorPane.getScene().getWindow();
             stage.setScene(new Scene(gameHistory));
             stage.show();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }

@@ -190,10 +190,11 @@ public class WaitingRoomController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
             Parent homeScreen = loader.load();
 
+            HomeScreenController homeScreenController = loader.getController();
+            homeScreenController.setUsername(username);
+
             // Get the current stage
             Stage stage = (Stage) waitingLabel.getScene().getWindow();
-
-            // Set the scene to the home screen
             stage.setScene(new Scene(homeScreen));
             stage.show();
         } catch (IOException e) {

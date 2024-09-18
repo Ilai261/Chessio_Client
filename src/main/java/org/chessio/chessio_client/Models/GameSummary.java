@@ -6,6 +6,8 @@ public class GameSummary
     private String player2;
     private String winner;
 
+    public GameSummary() {}
+
     public GameSummary(String player1, String player2, String winner)
     {
         this.player1 = player1;
