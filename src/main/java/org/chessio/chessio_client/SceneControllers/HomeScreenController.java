@@ -70,4 +70,20 @@ public class HomeScreenController
     void setUsername(String username) {
         this.username = username;
     }
+
+    @FXML
+    void openGameHistory(MouseEvent event) {
+        try {
+            // Load the GameHistory scene
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/GameHistory.fxml"));
+            Parent gameHistory = loader.load();
+
+            // Close the current HomeScreen and open GameHistory in the same window
+            Stage stage = (Stage) anchorPane.getScene().getWindow();
+            stage.setScene(new Scene(gameHistory));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

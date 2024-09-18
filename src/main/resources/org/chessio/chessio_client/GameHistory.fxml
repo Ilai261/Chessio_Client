@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ScrollPane?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:id="vbox"
       fx:controller="org.chessio.chessio_client.SceneControllers.GameHistoryController" spacing="10" alignment="CENTER">
 
     <!-- Button to go back to the home screen -->

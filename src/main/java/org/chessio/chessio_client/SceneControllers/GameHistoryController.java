@@ -1,10 +1,12 @@
 package org.chessio.chessio_client.SceneControllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,8 @@ import javafx.scene.Parent;
 import org.chessio.chessio_client.Models.GameSummary;
 
 public class GameHistoryController {
+    @FXML
+    private VBox vbox;
 
     @FXML
     private TableView<GameSummary> leaderboardTable;
@@ -35,19 +39,41 @@ public class GameHistoryController {
         // Add some sample data (optional, replace with actual data)
         leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
         leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
+        leaderboardTable.getItems().add(new GameSummary("Alice", "Bob", "Alice"));
+        leaderboardTable.getItems().add(new GameSummary("Charlie", "David", "David"));
     }
 
     @FXML
-    private void handleBackToHomeAction(MouseEvent event) {
+    private void handleBackToHomeAction(ActionEvent event) {
         try {
             // Load the home screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
             Parent homeScreen = loader.load();
-            Stage stage = (Stage) leaderboardTable.getScene().getWindow();
+            Stage stage = (Stage) vbox.getScene().getWindow();
             stage.setScene(new Scene(homeScreen));
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 }
