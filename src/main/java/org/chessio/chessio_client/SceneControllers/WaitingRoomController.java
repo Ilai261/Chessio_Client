@@ -208,8 +208,12 @@ public class WaitingRoomController {
 
     private void sendQuitWaitingRoomMessageAndCloseSession() {
         try {
-            if (session != null && session.isOpen()) {
-                session.close();
+            if (session != null && session.isOpen())
+            {
+                String quitMessage = "quit_waiting_room|" + username;
+                session.getBasicRemote().sendText(quitMessage);
+                session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE,
+                        "User quit the waiting room"));
             }
         } catch (IOException e) {
             e.printStackTrace();
