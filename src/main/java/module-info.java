@@ -23,6 +23,4 @@ module org.chessio.chessio_client {
     opens org.chessio.chessio_client.SceneControllers to javafx.fxml;
     exports org.chessio.chessio_client.Models;
     opens org.chessio.chessio_client.Models to javafx.fxml;
-    exports org.chessio.chessio_client.Manager;
-    opens org.chessio.chessio_client.Manager to javafx.fxml;
 }
