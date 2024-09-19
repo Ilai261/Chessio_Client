@@ -1,3 +1,6 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class defines the login request to the server, it contains a username and a password.
+
 package org.chessio.chessio_client.Models;
 
 public class LoginRequest

@@ -1,3 +1,7 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class defines the GameSummary object, same as the 'LightGameSummary' in the server code.
+// used to retrieve a player's game history, a list of game summaries
+
 package org.chessio.chessio_client.Models;
 
 public class GameSummary

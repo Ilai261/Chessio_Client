@@ -1,10 +1,13 @@
-package org.chessio.chessio_client.Models;
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class defines the chess board for white and black, and serves as the code representation of the gui board.
+// each player has one GraphicsBoard object
 
+package org.chessio.chessio_client.Models;
 
 public class GraphicsBoard {
 
-    private String[][] board;
-    private String color;
+    private final String[][] board;
+    private final String color;
 
     public GraphicsBoard(String color) {
         this.color = color;
@@ -12,20 +15,20 @@ public class GraphicsBoard {
         initializeBoard();
     }
 
-    // Initialize the board based on the color (white or black)
+    // initialize the board based on the color (white or black)
     private void initializeBoard() {
         if (color.equals("white")) {
             // Initialize white pieces
-            board[6] = new String[]{"WP", "WP", "WP", "WP", "WP", "WP", "WP", "WP"}; // Pawns
-            board[7] = new String[]{"WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"}; // Rooks, Knights, Bishops, etc.
+            board[6] = new String[]{"WP", "WP", "WP", "WP", "WP", "WP", "WP", "WP"}; // pawns
+            board[7] = new String[]{"WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"}; // rooks, knights, bishops, etc.
         } else {
             // Initialize black pieces
-            board[1] = new String[]{"BP", "BP", "BP", "BP", "BP", "BP", "BP", "BP"}; // Pawns
-            board[0] = new String[]{"BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"}; // Rooks, Knights, Bishops, etc.
+            board[1] = new String[]{"BP", "BP", "BP", "BP", "BP", "BP", "BP", "BP"}; // pawns
+            board[0] = new String[]{"BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"}; // rooks, knights, bishops, etc.
         }
     }
 
-    // Get the piece at a given row and column
+    // get the piece at a given row and column
     public String getPieceAt(int row, int col) {
         if (row >= 0 && row < 8 && col >= 0 && col < 8) {
             return board[row][col];
