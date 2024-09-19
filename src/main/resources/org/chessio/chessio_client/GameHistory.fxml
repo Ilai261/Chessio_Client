@@ -7,13 +7,13 @@
 <?import javafx.scene.control.ScrollPane?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:id="vbox"
-      fx:controller="org.chessio.chessio_client.SceneControllers.GameHistoryController" spacing="10" alignment="CENTER">
+      fx:controller="org.chessio.chessio_client.SceneControllers.GameHistoryController" spacing="10" alignment="CENTER" style="-fx-background-color: rgb(48, 46, 43);">
 
     <!-- Button to go back to the home screen -->
     <Button fx:id="backToHomeButton" text="Back to Home Screen" style="
                             -fx-font-size: 18px;
-                            -fx-background-color: #FF5722;
-                            -fx-text-fill: white;
+                            -fx-background-color: rgb(118, 150, 86);
+                            -fx-text-fill: black;
                             -fx-padding: 10 20;
                             -fx-background-radius: 10;
                             -fx-border-radius: 10;
@@ -25,9 +25,9 @@
     <ScrollPane fitToWidth="true" fitToHeight="true">
         <TableView fx:id="leaderboardTable" prefWidth="400">
             <columns>
-                <TableColumn fx:id="player1Column" text="Player 1" prefWidth="150"/>
-                <TableColumn fx:id="player2Column" text="Player 2" prefWidth="150"/>
-                <TableColumn fx:id="winnerColumn" text="Winner" prefWidth="100"/>
+                <TableColumn fx:id="player1Column" text="Player 1" prefWidth="150" style="-fx-text-fill: white;" />
+                <TableColumn fx:id="player2Column" text="Player 2" prefWidth="150" style="-fx-text-fill: white;" />
+                <TableColumn fx:id="winnerColumn" text="Winner" prefWidth="100" style="-fx-text-fill: white;" />
             </columns>
         </TableView>
     </ScrollPane>

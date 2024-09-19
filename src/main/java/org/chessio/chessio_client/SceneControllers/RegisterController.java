@@ -132,7 +132,8 @@ public class RegisterController {
     }
 
     @FXML
-    private void handleLoginLink(ActionEvent event) {
-
+    private void handleLoginLink(ActionEvent event) throws IOException{
+        System.out.println("Register button clicked");
+        openNewScene("/org/chessio/chessio_client/login.fxml");
     }
 }

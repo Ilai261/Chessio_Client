@@ -3,12 +3,61 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.SceneControllers.SettingsController">
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.SceneControllers.SettingsController" spacing="20" alignment="CENTER" style="-fx-background-color: rgb(48, 46, 43);">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
     <children>
-        <Label text="Choose Enemy Level (1-20)" />
-        <Slider fx:id="levelSlider" min="1" max="20" value="1" blockIncrement="1" />
-        <RadioButton fx:id="whiteRadioButton" text="White" />
-        <RadioButton fx:id="blackRadioButton" text="Black" />
-        <Button text="Start Game" onAction="#startGame" />
+        <!-- Level Selection Label -->
+        <Label text="Choose Enemy Level" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" />
+
+        <!-- Level Grid -->
+        <GridPane alignment="CENTER" hgap="20" vgap="10">
+            <!-- Easy Levels -->
+            <children>
+                <Label text="Easy" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold; -fx-text-fill: white;" />
+                <RadioButton text="1" fx:id="level1" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: white;" />
+                <RadioButton text="2" fx:id="level2" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: white;" />
+                <RadioButton text="3" fx:id="level3" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: white;" />
+                <RadioButton text="4" fx:id="level4" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: white;" />
+                <RadioButton text="5" fx:id="level5" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: white;" />
+
+                <!-- Medium Levels -->
+                <Label text="Medium" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-weight: bold; -fx-text-fill: white;" />
+                <RadioButton text="6" fx:id="level6" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-text-fill: white;" />
+                <RadioButton text="7" fx:id="level7" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-text-fill: white;" />
+                <RadioButton text="8" fx:id="level8" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-text-fill: white;" />
+                <RadioButton text="9" fx:id="level9" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-text-fill: white;" />
+                <RadioButton text="10" fx:id="level10" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-text-fill: white;" />
+
+                <!-- Hard Levels -->
+                <Label text="Hard" GridPane.columnIndex="2" GridPane.rowIndex="0" style="-fx-font-weight: bold; -fx-text-fill: white;" />
+                <RadioButton text="11" fx:id="level11" GridPane.columnIndex="2" GridPane.rowIndex="1" style="-fx-text-fill: white;" />
+                <RadioButton text="12" fx:id="level12" GridPane.columnIndex="2" GridPane.rowIndex="2" style="-fx-text-fill: white;" />
+                <RadioButton text="13" fx:id="level13" GridPane.columnIndex="2" GridPane.rowIndex="3" style="-fx-text-fill: white;" />
+                <RadioButton text="14" fx:id="level14" GridPane.columnIndex="2" GridPane.rowIndex="4" style="-fx-text-fill: white;" />
+                <RadioButton text="15" fx:id="level15" GridPane.columnIndex="2" GridPane.rowIndex="5" style="-fx-text-fill: white;" />
+
+                <!-- Impossible Levels -->
+                <Label text="Impossible" GridPane.columnIndex="3" GridPane.rowIndex="0" style="-fx-font-weight: bold; -fx-text-fill: white;" />
+                <RadioButton text="16" fx:id="level16" GridPane.columnIndex="3" GridPane.rowIndex="1" style="-fx-text-fill: white;" />
+                <RadioButton text="17" fx:id="level17" GridPane.columnIndex="3" GridPane.rowIndex="2" style="-fx-text-fill: white;" />
+                <RadioButton text="18" fx:id="level18" GridPane.columnIndex="3" GridPane.rowIndex="3" style="-fx-text-fill: white;" />
+                <RadioButton text="19" fx:id="level19" GridPane.columnIndex="3" GridPane.rowIndex="4" style="-fx-text-fill: white;" />
+                <RadioButton text="20" fx:id="level20" GridPane.columnIndex="3" GridPane.rowIndex="5" style="-fx-text-fill: white;" />
+            </children>
+        </GridPane>
+
+        <!-- Radio buttons for color selection (White/Black) -->
+        <Label text="Choose Your Color" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" />
+        <HBox alignment="CENTER" spacing="10">
+            <RadioButton fx:id="whiteRadioButton" text="White" style="-fx-text-fill: white;" />
+            <RadioButton fx:id="blackRadioButton" text="Black" style="-fx-text-fill: white;" />
+        </HBox>
+
+        <!-- Start Game Button -->
+        <Button text="Start Game" onAction="#startGame" style="-fx-background-color: rgb(118, 150, 86); -fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 16px; -fx-padding: 10px 20px;" />
     </children>
 </VBox>

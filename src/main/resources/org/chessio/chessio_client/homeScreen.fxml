@@ -4,16 +4,16 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="421.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.SceneControllers.HomeScreenController">
+<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="421.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.SceneControllers.HomeScreenController" style="-fx-background-color: rgb(48, 46, 43);">
     <children>
         <!-- Title Label -->
-        <Label layoutX="177.0" layoutY="42.0" prefHeight="28.0" prefWidth="140.0" text="Let's Play!" />
+        <Label layoutX="140.0" layoutY="42.0" prefHeight="28.0" prefWidth="200.0" text="Let's Play!" style="-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;" />
 
         <!-- Main Container with Spacing Between Buttons -->
         <HBox alignment="CENTER" layoutX="50.0" layoutY="150.0" prefHeight="100.0" prefWidth="320.0" spacing="30">
             <!-- Play with Bot Button with Icon Below Text -->
             <VBox alignment="CENTER">
-                <Button fx:id="botGameButton" mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
+                <Button fx:id="botGameButton" mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0" style="-fx-background-color: rgb(118, 150, 86); -fx-text-fill: black; -fx-font-weight: bold;">
                     <graphic>
                         <VBox alignment="CENTER" onMousePressed="#botPressed" spacing="5">
                             <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -21,7 +21,7 @@
                                     <Image url="@Icons/bot_icon.png" />
                                 </image>
                             </ImageView>
-                            <Label text="Play with Bot" />
+                            <Label text="Play with Bot" style="-fx-text-fill: white;" />
                         </VBox>
                     </graphic>
                 </Button>
@@ -29,7 +29,7 @@
 
             <!-- Search Online Button with Icon Below Text -->
             <VBox alignment="CENTER">
-                <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
+                <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0" style="-fx-background-color: rgb(118, 150, 86); -fx-text-fill: black; -fx-font-weight: bold;">
                     <graphic>
                         <VBox fx:id="onlineGameBtn" alignment="CENTER" onMousePressed="#onlinePressed" prefWidth="85.0" spacing="5">
                             <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -37,7 +37,7 @@
                                     <Image url="@Icons/searchOpponent_icon.png" />
                                 </image>
                             </ImageView>
-                            <Label text="Search Online" />
+                            <Label text="Search Online" style="-fx-text-fill: white;" />
                         </VBox>
                     </graphic>
                 </Button>
@@ -45,8 +45,8 @@
         </HBox>
 
         <!-- Quit Button with Icon Below Text -->
-        <VBox alignment="CENTER" layoutX="150.0" layoutY="270.0">
-            <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0">
+        <VBox alignment="CENTER" layoutX="140.0" layoutY="270.0">
+            <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="140.0" style="-fx-background-color: rgb(118, 150, 86); -fx-text-fill: black; -fx-font-weight: bold;">
                 <graphic>
                     <VBox fx:id="quitButton" alignment="CENTER" onMousePressed="#quitPressed" spacing="5">
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -54,15 +54,15 @@
                                 <Image url="@Icons/quit_icon.png" />
                             </image>
                         </ImageView>
-                        <Label text="Quit" />
+                        <Label text="Quit" style="-fx-text-fill: white;" />
                     </VBox>
                 </graphic>
             </Button>
         </VBox>
 
         <!-- New Game History Button without Icon -->
-        <VBox alignment="CENTER" layoutX="150.0" layoutY="370.0">
-            <Button fx:id="gameHistoryButton" text="Game History" mnemonicParsing="false" prefHeight="40.0" prefWidth="140.0" onMousePressed="#openGameHistory"/>
+        <VBox alignment="CENTER" layoutX="140.0" layoutY="380.0">
+            <Button fx:id="gameHistoryButton" text="Game History" mnemonicParsing="false" prefHeight="40.0" prefWidth="140.0" onMousePressed="#openGameHistory" style="-fx-background-color: rgb(118, 150, 86); -fx-text-fill: black; -fx-font-weight: bold;" />
         </VBox>
     </children>
 </AnchorPane>

@@ -14,7 +14,13 @@ import java.io.IOException;
 public class SettingsController {
 
     @FXML
-    private Slider levelSlider; // Slider for enemy level
+    private RadioButton level1, level2, level3, level4, level5;
+    @FXML
+    private RadioButton level6, level7, level8, level9, level10;
+    @FXML
+    private RadioButton level11, level12, level13, level14, level15;
+    @FXML
+    private RadioButton level16, level17, level18, level19, level20;
 
     @FXML
     private RadioButton whiteRadioButton; // RadioButton for white pieces
@@ -37,14 +43,28 @@ public class SettingsController {
 
     @FXML
     public void initialize() {
-        // Create and set the ToggleGroup programmatically
+        // Array of level RadioButtons
+        RadioButton[] levelButtons = {
+                level1, level2, level3, level4, level5,
+                level6, level7, level8, level9, level10,
+                level11, level12, level13, level14, level15,
+                level16, level17, level18, level19, level20
+        };
+
+        // Create and set the ToggleGroup programmatically for levels
+        ToggleGroup levelToggleGroup = new ToggleGroup();
+        for (RadioButton levelButton : levelButtons) {
+            levelButton.setToggleGroup(levelToggleGroup);
+        }
+
+        // Create and set the ToggleGroup for color
         ToggleGroup colorToggleGroup = new ToggleGroup();
         whiteRadioButton.setToggleGroup(colorToggleGroup);
         blackRadioButton.setToggleGroup(colorToggleGroup);
 
         // Set default values for color and level
         selectedColor = "white"; // Default color is white
-        enemyLevel = (int) levelSlider.getValue(); // Get the initial slider value
+        enemyLevel = 1; // Default level is 1 (from level1 button)
 
         // Listener for color selection
         colorToggleGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
@@ -55,11 +75,13 @@ public class SettingsController {
             }
         });
 
-        // Listener for the slider value
-        levelSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            enemyLevel = newValue.intValue();
+        // Listener for level selection
+        levelToggleGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
+            RadioButton selectedRadioButton = (RadioButton) newToggle;
+            enemyLevel = Integer.parseInt(selectedRadioButton.getText()); // Get level from the RadioButton text
         });
     }
+
 
     // Method to handle the "Start Game" button click
     @FXML
@@ -74,7 +96,7 @@ public class SettingsController {
         }
 
         // Close the current settings window
-        Stage settingsStage = (Stage) levelSlider.getScene().getWindow();
+        Stage settingsStage = (Stage) level1.getScene().getWindow();
         settingsStage.close();
 
         // Load the ChessBoardController with the selected color and enemy level
@@ -99,8 +121,7 @@ public class SettingsController {
         }
     }
 
-    public void setUsername(String playerUsername)
-    {
+    public void setUsername(String playerUsername) {
         this.username = playerUsername;
     }
 }
