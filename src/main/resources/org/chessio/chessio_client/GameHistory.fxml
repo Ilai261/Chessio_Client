@@ -18,16 +18,16 @@
                             -fx-background-radius: 10;
                             -fx-border-radius: 10;
                             -fx-font-weight: bold;
-                            -fx-alignment: CENTER_LEFT;
+                            -fx-alignment: CENTER;
                             " onAction="#handleBackToHomeAction"/>
 
     <!-- ScrollPane to make the table scrollable if needed -->
     <ScrollPane fitToWidth="true" fitToHeight="true">
         <TableView fx:id="leaderboardTable" prefWidth="400">
             <columns>
-                <TableColumn fx:id="player1Column" text="Player 1" prefWidth="150" style="-fx-text-fill: white;" />
-                <TableColumn fx:id="player2Column" text="Player 2" prefWidth="150" style="-fx-text-fill: white;" />
-                <TableColumn fx:id="winnerColumn" text="Winner" prefWidth="100" style="-fx-text-fill: white;" />
+                <TableColumn fx:id="player1Column" text="Player 1" prefWidth="150" style="-fx-text-fill: black; -fx-alignment: CENTER;" />
+                <TableColumn fx:id="player2Column" text="Player 2" prefWidth="150" style="-fx-text-fill: black; -fx-alignment: CENTER;" />
+                <TableColumn fx:id="winnerColumn" text="Winner" prefWidth="100" style="-fx-text-fill: black; -fx-alignment: CENTER;" />
             </columns>
         </TableView>
     </ScrollPane>
