@@ -1,6 +1,7 @@
-package org.chessio.chessio_client.SceneControllers;
 // Written by Ilai Azaria and Eitan Feldsherovich, 2024
 //settings allows the user to choose difficulty level of the bot and the color that he want to play with.
+
+package org.chessio.chessio_client.SceneControllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

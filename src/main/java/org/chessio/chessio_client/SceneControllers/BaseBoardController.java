@@ -1,3 +1,8 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class is handling a big part of the logic behind the chess game,
+// and uses an api that calculates some of the legal moves.
+// credit for that api to github.bhlangonijr.chesslib, and it makes sure that all of the actions are possible.
+
 package org.chessio.chessio_client.SceneControllers;
 
 import com.github.bhlangonijr.chesslib.*;
@@ -26,16 +31,13 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-// Written by Ilai Azaria and Eitan Feldsherovich, 2024
-// This class is handling a big part of the logic behind the chess game, and uses an api that calculates some of the legal moves
-//credit for that api to github.bhlangonijr.chesslib, and it makes sure that all of the actions are possible.
 public abstract class BaseBoardController
 {
     @FXML
     protected GridPane gridPane; // reference to the gridpane from the FXML
 
     @FXML
-    protected Label turnLabel; // label for your turn"
+    protected Label turnLabel; // label for your turn
 
     @FXML
     protected Label usernameLabel; // for the username label

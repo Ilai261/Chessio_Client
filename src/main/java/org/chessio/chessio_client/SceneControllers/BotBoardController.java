@@ -1,3 +1,7 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class is handling a big part of the logic behind the chess game, that is specific to the bot
+// it uses stockfish api to get the best move at different grades of thinking
+
 package org.chessio.chessio_client.SceneControllers;
 
 import com.github.bhlangonijr.chesslib.*;
@@ -17,10 +21,6 @@ import com.github.bhlangonijr.chesslib.move.Move;
 import java.io.*;
 import java.io.File;
 import java.util.Optional;
-
-// Written by Ilai Azaria and Eitan Feldsherovich, 2024
-// This class is handling a big part of the logic behind the chess game, that is specific to the bot
-//it uses stockfish api to get the best move at different grades of thinking
 
 public class BotBoardController extends BaseBoardController
 {

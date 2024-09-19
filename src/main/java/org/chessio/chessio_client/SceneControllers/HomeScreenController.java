@@ -1,3 +1,7 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class is handling the possible actions from the home screen fxml, which are playing against a bot,
+// searching online, or viewing history of past games.
+
 package org.chessio.chessio_client.SceneControllers;
 
 import javafx.application.Platform;
@@ -10,8 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-// Written by Ilai Azaria and Eitan Feldsherovich, 2024
-// This class is handling the possible actions from the home screen fxml, which are playing against a bot, searching online, or viewing history of past games.
+
 public class HomeScreenController
 {
 

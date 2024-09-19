@@ -1,3 +1,6 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class is handling the registry with communication to the server, and allows to go back to the login screen.
+
 package org.chessio.chessio_client.SceneControllers;
 
 import javafx.application.Platform;
@@ -16,8 +19,7 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 
 import static org.chessio.chessio_client.JavafxUtils.JavaFXUtils.createAlert;
-// Written by Ilai Azaria and Eitan Feldsherovich, 2024
-// This class is handling the registry with communication to the server, and allows to go back to the login screen.
+
 public class RegisterController {
 
     @FXML

@@ -1,3 +1,6 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class creates the screen that shows the game history for a user, and is given by a request from the server.
+
 package org.chessio.chessio_client.SceneControllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,9 +22,6 @@ import org.chessio.chessio_client.Services.ClientHttpSender;
 
 import java.net.http.HttpResponse;
 import java.util.List;
-
-// Written by Ilai Azaria and Eitan Feldsherovich, 2024
-// This class creates the screen that shows the game history for a user, and is given by a request from the server.
 
 public class GameHistoryController {
     @FXML

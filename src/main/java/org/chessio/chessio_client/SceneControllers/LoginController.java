@@ -1,3 +1,7 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class is handling the logging in and uses the server to authenticate, and allows unregistered users
+//to go to registery screen.
+
 package org.chessio.chessio_client.SceneControllers;
 
 import javafx.application.Platform;
@@ -16,9 +20,6 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import org.chessio.chessio_client.JavafxUtils.JavaFXUtils;
-// Written by Ilai Azaria and Eitan Feldsherovich, 2024
-// This class is handling the logging in and uses the server to authenticate, and allows unregistered users
-//to go to registery screen.
 
 public class LoginController
 {
