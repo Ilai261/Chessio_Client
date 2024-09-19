@@ -1,6 +1,7 @@
 package org.chessio.chessio_client.SceneControllers;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -128,5 +129,10 @@ public class RegisterController {
 
         // Set the new scene on the current stage
         stage.setScene(new Scene(root));
+    }
+
+    @FXML
+    private void handleLoginLink(ActionEvent event) {
+
     }
 }

@@ -6,13 +6,16 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" prefHeight="381.0" prefWidth="375.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.SceneControllers.RegisterController">
+<VBox alignment="CENTER" prefHeight="381.0" prefWidth="375.0" spacing="20.0" style="-fx-background-color: rgb(48, 46, 43);" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.chessio.chessio_client.SceneControllers.RegisterController" >
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-    <VBox alignment="TOP_CENTER" prefHeight="143.0" prefWidth="335.0">
+    <VBox alignment="TOP_CENTER" prefHeight="143.0" prefWidth="335.0" spacing="40.0">
         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cheesio">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cheesio" style = "    -fx-font-size: 18px;
+    -fx-fill: white; /* Similar to -fx-text-fill */
+    -fx-font-weight: bold;
+    -fx-alignment: center;">
                 <font>
                     <Font size="22.0" />
                 </font>
@@ -21,14 +24,14 @@
                 <children>
                     <StackPane prefHeight="21.0" prefWidth="312.0">
                         <children>
-                            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="27.0" stroke="BLACK" strokeType="INSIDE" width="338.0" />
+                            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="rgb(118, 150, 86)" height="27.0" stroke="BLACK" strokeType="INSIDE" width="338.0" />
                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="User Name" />
                         </children>
                     </StackPane>
                     <TextField fx:id="usernameField" />
                     <StackPane prefHeight="15.0" prefWidth="323.0">
                         <children>
-                            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="27.0" stroke="BLACK" strokeType="INSIDE" width="335.0" />
+                            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="rgb(118, 150, 86)" height="27.0" stroke="BLACK" strokeType="INSIDE" width="338.0" />
                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
                         </children>
                     </StackPane>
@@ -37,5 +40,16 @@
             </VBox>
         </children>
     </VBox>
-    <Button fx:id="registerButton" onAction="#handleRegister" prefHeight="33.0" prefWidth="67.0" text="Register" textAlignment="CENTER" textOverrun="CLIP" />
+
+    <Button fx:id="registerButton" onAction="#handleRegister" prefHeight="40.0" prefWidth="70" text="Register"
+            style="-fx-background-color: rgb(118, 150, 86);
+        -fx-text-fill: black;
+        -fx-font-weight: bold;"/>
+
+    <!-- Added "Have a user? Login" button -->
+    <Button fx:id="loginLinkButton" onAction="#handleLoginLink" prefHeight="50.0" prefWidth="100.0"
+            text="Have a user? Login" wrapText="true" textAlignment="CENTER" alignment="CENTER"
+            style="-fx-background-color: rgb(118, 150, 86);
+        -fx-text-fill: black;
+        -fx-font-weight: bold;"/>
 </VBox>
