@@ -80,6 +80,7 @@ public class HomeScreenController
 
             GameHistoryController gameHistoryController = loader.getController();
             gameHistoryController.initialize(username);
+            gameHistoryController.setUsername(username);
 
             // Close the current HomeScreen and open GameHistory in the same window
             Stage stage = (Stage) anchorPane.getScene().getWindow();

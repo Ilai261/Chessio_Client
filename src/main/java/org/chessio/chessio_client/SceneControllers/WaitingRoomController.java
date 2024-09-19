@@ -23,6 +23,7 @@ import javafx.scene.image.ImageView;
 
 import java.time.Instant;
 import java.util.Objects;
+
 @ClientEndpoint
 public class WaitingRoomController {
 
@@ -185,6 +186,9 @@ public class WaitingRoomController {
         // Stop the waiting animation
         stopWaitingAnimation();
 
+        // send a request to the server to get out of the waiting queue
+        sendQuitWaitingRoomMessageAndCloseSession();
+
         try {
             // Load the home screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
@@ -197,6 +201,16 @@ public class WaitingRoomController {
             Stage stage = (Stage) waitingLabel.getScene().getWindow();
             stage.setScene(new Scene(homeScreen));
             stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendQuitWaitingRoomMessageAndCloseSession() {
+        try {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
