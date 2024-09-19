@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import org.chessio.chessio_client.JavafxUtils.JavaFXUtils;
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class is handling the logging in and uses the server to authenticate, and allows unregistered users
+//to go to registery screen.
 
 public class LoginController
 {
@@ -51,7 +54,7 @@ public class LoginController
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        // make a check to see if one of the fields is empty
+        // makes a check to see if one of the fields is empty
         if(username.isEmpty() || password.isEmpty())
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -92,11 +95,11 @@ public class LoginController
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
                     Parent root = loader.load();
 
-                    // Get the controller and pass the selected settings
+                    // Gets the controller and pass the selected settings
                     HomeScreenController homeScreenController = loader.getController();
                     homeScreenController.setUsername(username);
 
-                    // Get the current stage (instead of opening a new window)
+                    //moves to the current stage (instead of opening a new window)
                     Stage stage = (Stage) loginButton.getScene().getWindow(); // Assuming 'gridPane' is a node in the current scene
 
                     // Set the new scene in the current stage
@@ -134,15 +137,15 @@ public class LoginController
     }
 
     private void openNewScene() throws IOException {
-        // Load the new FXML file
+        // loads the new FXML file
         clientHttpSender.shutdown();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/register.fxml"));
         Parent root = loader.load();
 
-        // Get the current stage using any node (e.g., loginButton or registerButton)
+        // Gets the current stage using any node (e.g., loginButton or registerButton)
         Stage stage = (Stage) loginButton.getScene().getWindow();
 
-        // Set the new scene on the current stage
+        // sets the new scene on the current stage
         stage.setScene(new Scene(root));
     }
 

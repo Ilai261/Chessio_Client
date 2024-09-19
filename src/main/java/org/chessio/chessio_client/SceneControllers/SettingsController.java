@@ -5,11 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+//
 
 public class SettingsController {
 
@@ -67,7 +68,7 @@ public class SettingsController {
         enemyLevel = 1; // Default level is 1 (from level1 button)
 
         // Listener for color selection
-        colorToggleGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
+        colorToggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -> {
             if (newToggle == whiteRadioButton) {
                 selectedColor = "white";
             } else {
@@ -76,7 +77,7 @@ public class SettingsController {
         });
 
         // Listener for level selection
-        levelToggleGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
+        levelToggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -> {
             RadioButton selectedRadioButton = (RadioButton) newToggle;
             enemyLevel = Integer.parseInt(selectedRadioButton.getText()); // Get level from the RadioButton text
         });
@@ -117,7 +118,7 @@ public class SettingsController {
             gameStage.setScene(new Scene(root));
             gameStage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("can't open the bot chess board.");
         }
     }
 

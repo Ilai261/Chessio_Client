@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URI;
 import javafx.scene.image.ImageView;
 
-import java.time.Instant;
 import java.util.Objects;
 
 @ClientEndpoint
@@ -94,7 +93,7 @@ public class WaitingRoomController {
         }
         else if (messageParts.length > 1 && messageParts[1].equals("game_start"))
         {
-            // Load the game scene after disabling message handling in this controller
+            // loads the game scene after disabling message handling in this controller
             loadGameScene(message);
             System.out.println("game started");
         }
