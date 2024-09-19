@@ -1,5 +1,7 @@
 package org.chessio.chessio_client.SceneControllers;
-
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class is handling a big part of the logic behind the chess game online, it gets the move from the real opponent.
+//It updates the board in both screen, allows draw,winning or losing with a special screen to play again or quit.
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
@@ -25,18 +27,19 @@ import org.chessio.chessio_client.Models.GraphicsBoard;
 import java.io.IOException;
 import java.util.*;
 
+
 @ClientEndpoint
 public class OnlineBoardController extends BaseBoardController {
 
     private Session session;
     private String currentEnemyMoveMessage;
     private UUID gameId;
-    private boolean canOfferDraw = true;  // Flag to track draw offer cooldown
+    private boolean canOfferDraw = true;  //flag to track draw offer cooldown
     @FXML
-    private Label timerLabelOnline;  // Label for displaying the timer
+    private Label timerLabelOnline;  // fabel for displaying the timer
 
-    private Timeline timer;  // To update the timer every second
-    private long startTimeMillis;  // To track the start time
+    private Timeline timer;  // to update the timer every second
+    private long startTimeMillis;  // Tracks the start time
 
     @Override
     public void initializeGame(String gameStartMessage)
@@ -53,9 +56,9 @@ public class OnlineBoardController extends BaseBoardController {
         isPlayerTurn = !isPlayerBlack;
         if(!isPlayerTurn) {turnLabel.setText("Enemy turn");}
 
-        // Set up the board and begin the game
+        // sets up the board and begin the game
         createChessBoard();
-        // Add listener to the GridPane's scene property to ensure it's set before accessing the window
+        // Adds listener to the GridPane's scene property to ensure it's set before accessing the window
         Platform.runLater(() -> {
             Stage stage = (Stage) gridPane.getScene().getWindow();
             if (stage != null) {
@@ -101,14 +104,14 @@ public class OnlineBoardController extends BaseBoardController {
     @Override
     protected void onTileClicked(int row, int col) {
         if (isPlayerTurn && isLegalMove(selectedRow, selectedCol, row, col)) {
-            // Perform the move
+            // Performs the move because it is legal
             makePlayerMove(selectedRow, selectedCol, row, col);
             pieceSelected = false;
             clearHighlights();
             isPlayerTurn = false;
             turnLabel.setText("Enemy turn");
 
-            // Send move to server
+            // Sends move to server
             String move = getMoveUCI(selectedRow, selectedCol, row, col);
             try
             {
@@ -120,12 +123,12 @@ public class OnlineBoardController extends BaseBoardController {
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                System.out.println("onTileClicked: " + e);
             }
         }
         else
         {
-            // If the user clicks an invalid move, just clear the selection and highlights
+            // If the user clicks an invalid move, just clears the selection and highlights
             clearHighlights();
             pieceSelected = false;
         }
@@ -141,7 +144,7 @@ public class OnlineBoardController extends BaseBoardController {
         Square toSquare = Square.fromValue(to.toUpperCase());
 
         Move move = new Move(fromSquare, toSquare);
-        // check if it's a promotion and change move accordingly
+        // checks if it's a promotion and change move accordingly
         if (currentEnemyMoveMessage.length() == 5)
         {
             Side side = isPlayerBlack ? Side.WHITE : Side.BLACK;
@@ -155,7 +158,7 @@ public class OnlineBoardController extends BaseBoardController {
                     getRowFromUci(toSquare.value()), getColFromUci(toSquare.value()), move);
             chesslibBoard.doMove(move);
 
-            // check if a mate or a draw has occurred, if yes then go to end screen
+            // checks if a mate or a draw has occurred, if yes then go to end screen
             checkForDrawOrMateAndGotoEndScreen();
 
             isPlayerTurn = true; // Player's turn
@@ -169,19 +172,19 @@ public class OnlineBoardController extends BaseBoardController {
     protected void handleResignAction(ActionEvent actionEvent)
     {
         stopTimer();
-        // Create a confirmation dialog
+        // Creates a confirmation dialog
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Resign Confirmation");
         alert.setHeaderText("Are you sure you want to resign?");
         alert.setContentText("You will forfeit the game.");
 
-        // Add Yes and No buttons to the dialog
+        // Adds Yes and No buttons to the dialog
         ButtonType yesButton = new ButtonType("Yes");
         ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         alert.getButtonTypes().setAll(yesButton, noButton);
 
-        // Show the dialog and capture the user's response
+        // shows the dialog and capture the user's response
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == yesButton)
         {
@@ -197,7 +200,7 @@ public class OnlineBoardController extends BaseBoardController {
                 gameEnded = true;
                 showEndGameScreen("You resigned...");
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("failed regisnation action");
             }
         }
     }
@@ -207,14 +210,14 @@ public class OnlineBoardController extends BaseBoardController {
     {
         try
         {
-            // close the session when exiting to home screen
+            // closes the session when exiting to home screen
             if (session != null && session.isOpen()) {
                 session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "User quit the game"));
             }
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.println("failed closing the connection");
         }
         try
         {
@@ -228,7 +231,7 @@ public class OnlineBoardController extends BaseBoardController {
 
             // Get the current scene and set the new root
             Stage stage = (Stage) gridPane.getScene().getWindow();
-            // cancel the "x" button listener, as we are not going to be in an online game anymore
+            // cancels the "x" button listener, as we are not going to be in an online game anymore
             if (stage != null)
             {
                 // Remove the "X" button listener by setting it to null
@@ -237,7 +240,7 @@ public class OnlineBoardController extends BaseBoardController {
                 stage.show();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("failed closing the connection");
         }
     }
 
@@ -263,7 +266,7 @@ public class OnlineBoardController extends BaseBoardController {
             return;
         }
 
-        // Send draw offer to the opponent
+        // Sends draw offer to the opponent
         try {
             String drawOfferMessage = "draw_offer|" + gameId;
             session.getBasicRemote().sendText(drawOfferMessage);
@@ -272,10 +275,10 @@ public class OnlineBoardController extends BaseBoardController {
             // Set cooldown and disable draw offer for 1 minute
             canOfferDraw = false;
 
-            // Start a cooldown timer of 60 seconds
+            // starts a cooldown timer of 60 seconds like in thr rules
             startDrawCooldownTimer();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("onDrawOffer failed " + e.getMessage());
         }
     }
 
@@ -300,7 +303,7 @@ public class OnlineBoardController extends BaseBoardController {
 
     private void showDrawOfferPopup() {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);//shows to the other user the draw request.
             alert.setTitle("Draw Offer");
             alert.setHeaderText("Your opponent has offered a draw.");
             alert.setContentText("Do you accept the draw offer?");
@@ -326,7 +329,7 @@ public class OnlineBoardController extends BaseBoardController {
             System.out.println("Draw offer accepted and game ended as draw");
             handleDrawAccepted();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("accept draw failed " + e.getMessage());
         }
     }
 
@@ -336,12 +339,12 @@ public class OnlineBoardController extends BaseBoardController {
             session.getBasicRemote().sendText(rejectMessage);
             System.out.println("Draw offer rejected");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("reject draw failed " + e.getMessage());
         }
     }
 
     private void handleDrawAccepted()
-    {
+    {//does every procedure that is related to the end of the game
         stopTimer();
         gameEnded = true;
         gameResult = "draw";
@@ -349,7 +352,7 @@ public class OnlineBoardController extends BaseBoardController {
     }
 
     private void handleDrawRejected()
-    {
+    {//handles a rejection of a draw
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Draw Rejected");
@@ -369,15 +372,15 @@ public class OnlineBoardController extends BaseBoardController {
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.println("sendResult failed " + e.getMessage());
         }
     }
 
     private String getMoveUCI(int fromRow, int fromCol, int toRow, int toCol) {
-        // Convert to UCI format (e.g., "e2e4")
+        // convert to UCI format (e.g., "e2e4")
         String from = getColLetter(fromCol) + (8 - fromRow);
         String to = getColLetter(toCol) + (8 - toRow);
-        // check for pawn promotion to add to the UCI move representation
+        // checks for pawn promotion to add to the UCI move representation
         String UCIMove = from + to;
         if(playerPromotionValue != null)
         {
@@ -402,21 +405,21 @@ public class OnlineBoardController extends BaseBoardController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == yesButton) {
-            // Close the session and clean up resources before exiting
+            // Closes the session and clean up resources before exiting
             try {
                 // game ending logic sent to the server
                 gameResult = isPlayerBlack ? "white_win" : "black_win";
                 String resignationMessage = "resignation|" + gameResult + "|" + gameId;
                 session.getBasicRemote().sendText(resignationMessage);
 
-                // close the session and the app
+                // it closes the session and the app
                 session.close();
                 Platform.exit();  // Close the application
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("failed sending resignation message " + e.getMessage());
             }
         } else {
-            // Prevent the window from closing
+            // it Prevents the window from closing
             event.consume();
         }
     }
@@ -434,11 +437,11 @@ public class OnlineBoardController extends BaseBoardController {
     }
 
     private void startTimer() {
-        // Initialize the start time
+        // init the start time
         startTimeMillis = System.currentTimeMillis();
 
         // Set up the timeline to update the elapsed time every second
-        timer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+        timer = new Timeline(new KeyFrame(Duration.seconds(1), _ -> {
             long elapsedSeconds = (System.currentTimeMillis() - startTimeMillis) / 1000;
             timerLabelOnline.setText("Time:\n" + elapsedSeconds + " seconds");
         }));
@@ -446,7 +449,7 @@ public class OnlineBoardController extends BaseBoardController {
         timer.play();
     }
 
-    private void stopTimer() {
+    private void stopTimer() {//used in the end of the game(the small timer in the bottom right)
         if (timer != null) {
             timer.stop();
         }

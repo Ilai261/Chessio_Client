@@ -1,4 +1,7 @@
 package org.chessio.chessio_client.SceneControllers;
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+//a screen that opens when a user wants to play online, waits for another user, meanwhile plays a cool animaton
+//allows to go back to home screen and press other buttons.
 
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -35,18 +38,18 @@ public class WaitingRoomController {
 
     private Timeline timer;
 
-    // Start time to track the elapsed time
+    // start time to track the elapsed time
     private long startTimeMillis;
 
-    // ImageView for the waiting icon
+    // imageView for the waiting icon
     @FXML
     private ImageView waitingIcon;
 
-    // Label for the elapsed time display
+    // label for the elapsed time display
     @FXML
     private Label timerLabel;
 
-    // RotateTransition for the rotating animation
+    // rotateTransition for the rotating animation
     private RotateTransition rotateTransition;
 
     public void initialize(String username) {
@@ -61,7 +64,7 @@ public class WaitingRoomController {
         System.out.println("Connected to the server.");
         this.chessioMessageHandler = new WaitingRoomChessioMessageHandler(this);
 
-        // Send the username to the server when a connection is made
+        // sends the username to the server when a connection is made between two players
         String usernameMessage = "username|" + username;
         try {
             session.getBasicRemote().sendText(usernameMessage);
@@ -74,7 +77,7 @@ public class WaitingRoomController {
     public void onMessage(String message) {
         if (chessioMessageHandler != null)
         {
-            Platform.runLater(() -> chessioMessageHandler.handleMessage(message)); // Delegate to the correct handler
+            Platform.runLater(() -> chessioMessageHandler.handleMessage(message)); // delegate to the correct handler
         }
     }
 
@@ -109,37 +112,37 @@ public class WaitingRoomController {
             String baseurl = "ws://" + AppConfig.getServerAddress() + ":" + AppConfig.getServerPort();
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             URI uri = new URI(baseurl + "/game");
-            container.connectToServer(this, uri);
+            container.connectToServer(this, uri);//like before sets the connection
         }
         catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Failed to connect to the server.");
         }
     }
 
     private void loadGameScene(String message) {
-        // Load the chess game scene when opponent is found
+        // Loads the chess game scene when opponent is found
         stopWaitingAnimation();//added
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/onlineChessBoard.fxml"));
             Parent root = loader.load();
 
-            // Pass the game start details to the chess board controller
+            // Passes the game start details to the chess board controller
             OnlineBoardController chessBoardController = loader.getController();
             chessBoardController.setUsername(username);
             chessBoardController.setUsernameLabel(username);
 
-            // set the game controller as the function endpoint for new messages and initialize the game
+            // sets the game controller as the function endpoint for new messages and initialize the game
             this.setChessioMessageHandler(new OnlineBoardChessioMessageHandler(chessBoardController));
             chessBoardController.setSession(session);
             chessBoardController.initializeGame(message);
 
-            // Switch the scene to the chess game
+            // switches the scene to the chess game
             Stage stage = (Stage) waitingLabel.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
         }
         catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("failed to load game");
         }
     }
 
@@ -156,15 +159,15 @@ public class WaitingRoomController {
     private void startWaitingAnimation() {
         Image image = new Image(Objects.requireNonNull(getClass().getResource("/org/chessio/chessio_client/Icons/wait.png")).toExternalForm());
         waitingIcon.setImage(image);
-        // Initialize the start time
+        // int the start time
         startTimeMillis = System.currentTimeMillis();
-        // Set up the rotation animation (180 degrees every 100 ms)
+        // sets up the rotation animation (180 degrees every 100 ms)
         rotateTransition = new RotateTransition(Duration.millis(800), waitingIcon);
         rotateTransition.setByAngle(180);
         rotateTransition.setCycleCount(Animation.INDEFINITE);  // Keep rotating
         rotateTransition.play();
-        // Set up the timeline to update the elapsed time every second
-        timer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+        // sets up the timeline to update the elapsed time every second
+        timer = new Timeline(new KeyFrame(Duration.seconds(1), _ -> {
             long elapsedSeconds = (System.currentTimeMillis() - startTimeMillis) / 1000;
             timerLabel.setText("Time elapsed: " + elapsedSeconds + " seconds");
         }));
@@ -182,10 +185,10 @@ public class WaitingRoomController {
 
     @FXML
     private void handleQuitAction() {
-        // Stop the waiting animation
+        // Stops the waiting animation
         stopWaitingAnimation();
 
-        // send a request to the server to get out of the waiting queue
+        // sends a request to the server to get out of the waiting queue
         sendQuitWaitingRoomMessageAndCloseSession();
 
         try {
@@ -201,7 +204,7 @@ public class WaitingRoomController {
             stage.setScene(new Scene(homeScreen));
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to quit");
         }
     }
 
@@ -215,7 +218,7 @@ public class WaitingRoomController {
                         "User quit the waiting room"));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to send quit waiting room message");
         }
     }
 }

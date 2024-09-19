@@ -1,4 +1,6 @@
 package org.chessio.chessio_client.SceneControllers;
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+//settings allows the user to choose difficulty level of the bot and the color that he want to play with.
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,8 +11,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-// Written by Ilai Azaria and Eitan Feldsherovich, 2024
-//
 
 public class SettingsController {
 
@@ -24,20 +24,20 @@ public class SettingsController {
     private RadioButton level16, level17, level18, level19, level20;
 
     @FXML
-    private RadioButton whiteRadioButton; // RadioButton for white pieces
+    private RadioButton whiteRadioButton; // radioButton for white pieces
 
     @FXML
-    private RadioButton blackRadioButton; // RadioButton for black pieces
+    private RadioButton blackRadioButton; // radioButton for black pieces
 
     private Stage homeStage; // Reference to the HomeScreenController stage
 
-    private String selectedColor; // To hold the selected color
+    private String selectedColor; // to hold the selected color
 
-    private int enemyLevel; // To hold the selected enemy level
+    private int enemyLevel; //holds the selected enemy level
 
     private String username;
 
-    // Set the home stage from HomeScreenController
+    // Sets the home stage from HomeScreenController
     public void setHomeStage(Stage homeStage) {
         this.homeStage = homeStage;
     }
@@ -52,22 +52,22 @@ public class SettingsController {
                 level16, level17, level18, level19, level20
         };
 
-        // Create and set the ToggleGroup programmatically for levels
+        // creates and set the ToggleGroup programmatically for levels
         ToggleGroup levelToggleGroup = new ToggleGroup();
         for (RadioButton levelButton : levelButtons) {
             levelButton.setToggleGroup(levelToggleGroup);
         }
 
-        // Create and set the ToggleGroup for color
+        // creates and set the ToggleGroup for color
         ToggleGroup colorToggleGroup = new ToggleGroup();
         whiteRadioButton.setToggleGroup(colorToggleGroup);
         blackRadioButton.setToggleGroup(colorToggleGroup);
 
-        // Set default values for color and level
+        // sets default values for color and level
         selectedColor = "white"; // Default color is white
         enemyLevel = 1; // Default level is 1 (from level1 button)
 
-        // Listener for color selection
+        // listens for color selection by the user
         colorToggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -> {
             if (newToggle == whiteRadioButton) {
                 selectedColor = "white";
@@ -76,7 +76,7 @@ public class SettingsController {
             }
         });
 
-        // Listener for level selection
+        // Listener for the level selection
         levelToggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -> {
             RadioButton selectedRadioButton = (RadioButton) newToggle;
             enemyLevel = Integer.parseInt(selectedRadioButton.getText()); // Get level from the RadioButton text
@@ -84,35 +84,35 @@ public class SettingsController {
     }
 
 
-    // Method to handle the "Start Game" button click
+    // Method to handle the Start Game button
     @FXML
     private void startGame() {
-        // Print the selected color and level for debugging
+        // Prints the selected color and level for debugging
         System.out.println("Selected Color: " + selectedColor);
         System.out.println("Selected Enemy Level: " + enemyLevel);
 
-        // Close the HomeScreen stage
+        // Closes the HomeScreen stage
         if (homeStage != null) {
             homeStage.close();
         }
 
-        // Close the current settings window
+        // Closes the current settings window
         Stage settingsStage = (Stage) level1.getScene().getWindow();
         settingsStage.close();
 
-        // Load the ChessBoardController with the selected color and enemy level
+        // Loads the ChessBoardController with the selected color and enemy level
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/botChessBoard.fxml"));
             Parent root = loader.load();
 
-            // Get the controller and pass the selected settings
+            // gets the controller and pass the selected settings by the user
             BotBoardController chessBoardController = loader.getController();
             chessBoardController.setEnemyLevel(enemyLevel);
             chessBoardController.setUsername(username);
             chessBoardController.setUsernameLabel(username);
             chessBoardController.initializeGame(selectedColor); // Method to initialize the game with color and level
 
-            // Open the chessboard screen
+            // opens the chessboard screen
             Stage gameStage = new Stage();
             gameStage.setTitle("ChessBoard");
             gameStage.setScene(new Scene(root));
