@@ -1,3 +1,7 @@
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class defines the client's HTTP request sender, that sends HTTP a-synchronized requests to the server
+// (register, login and retrieve game history)
+
 package org.chessio.chessio_client.Services;
 
 import java.net.URI;
@@ -11,6 +15,7 @@ import javafx.concurrent.Task;
 import org.chessio.chessio_client.Configurations.AppConfig;
 
 public class ClientHttpSender {
+    // base url of the server
     private final String baseUrl;
     private final java.net.http.HttpClient client;
     private final ObjectMapper objectMapper;
@@ -26,12 +31,13 @@ public class ClientHttpSender {
         this.client = java.net.http.HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper();
         final int NUM_THREADS = 5;
-        this.executorService = Executors.newFixedThreadPool(NUM_THREADS); // Adjust pool size as needed
-
+        this.executorService = Executors.newFixedThreadPool(NUM_THREADS); // adjust pool size as needed
     }
 
+    // post request
     public <T> HttpResponse<String> post(String endpoint, T body) throws Exception
     {
+        // parses to JSON, builds the request and sends it as a post
         String json = objectMapper.writeValueAsString(body);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + endpoint))
@@ -42,6 +48,7 @@ public class ClientHttpSender {
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
+    // a-synchronized post request, calls the post function inside a new Task object
     public <T> Task<HttpResponse<String>> postAsync(String endpoint, T body)
     {
         return new Task<>() {
@@ -52,6 +59,7 @@ public class ClientHttpSender {
         };
     }
 
+    // shuts down the executor service
     public void shutdown() {
         executorService.shutdown();
     }
