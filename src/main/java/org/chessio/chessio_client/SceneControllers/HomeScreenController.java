@@ -1,5 +1,6 @@
 package org.chessio.chessio_client.SceneControllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -63,8 +64,7 @@ public class HomeScreenController
     @FXML
     void quitPressed(MouseEvent event) {
         // Handle quit functionality
-        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        Platform.exit();
     }
 
     void setUsername(String username) {
