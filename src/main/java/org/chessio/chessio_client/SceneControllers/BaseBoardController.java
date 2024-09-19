@@ -4,9 +4,7 @@ import com.github.bhlangonijr.chesslib.*;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
@@ -23,23 +21,24 @@ import org.chessio.chessio_client.Models.GraphicsBoard;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveGenerator;
 
-import java.io.*;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class is handling a big part of the logic behind the chess game, and uses an api that calculates some of the legal moves
+//credit for that api to github.bhlangonijr.chesslib, and it makes sure that all of the actions are possible.
 public abstract class BaseBoardController
 {
     @FXML
-    protected GridPane gridPane; // Reference to the GridPane from the FXML
+    protected GridPane gridPane; // reference to the gridpane from the FXML
 
     @FXML
-    protected Label turnLabel; // Label for "Your turn" (optional)
+    protected Label turnLabel; // label for your turn"
 
     @FXML
-    protected Label usernameLabel; // For the "Username" label
+    protected Label usernameLabel; // for the username label
 
     @FXML
     protected Label enemyLabel;
@@ -51,15 +50,15 @@ public abstract class BaseBoardController
     protected Label endGameLabel;
 
 
-    protected static final int TILE_SIZE = 80; // Size of each tile
-    protected static final int BOARD_SIZE = 8; // Chessboard is 8x8
+    protected static final int TILE_SIZE = 80; // size of each tile
+    protected static final int BOARD_SIZE = 8; // chessboard is 8x8
 
     protected GraphicsBoard playerGraphicsBoard;
     protected GraphicsBoard enemyGraphicsBoard;
     protected boolean isPlayerBlack;
     protected boolean pieceSelected = false;
     protected int selectedRow = -1, selectedCol = -1;
-    protected boolean isPlayerTurn;  // Track if it's the player's turn
+    protected boolean isPlayerTurn;  // track if it's the player turn
 
     protected Board chesslibBoard = new Board();
     protected int enemyLevel;
@@ -68,95 +67,95 @@ public abstract class BaseBoardController
     protected String username;
     protected String playerPromotionValue = null;
 
-    // Initialize the game and start Stockfish process
+    // initialize the game and start Stockfish for bot logic
     public abstract void initializeGame(String playerColor);
 
     protected void createChessBoard() {
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
-                // Flip the row if the player is black
+                //flip the row if the player is black
                 int displayRow = getSquareAdjustedRow(row);
 
                 Rectangle tile = createTile(displayRow, col);
                 gridPane.add(tile, col, row);
 
                 String pieceSymbol = playerGraphicsBoard.getPieceAt(displayRow, col);
-                if (pieceSymbol == null) {
+                if (pieceSymbol == null) {//there is a piece or enemy piece
                     pieceSymbol = enemyGraphicsBoard.getPieceAt(displayRow, col);
                 }
 
                 if (pieceSymbol != null) {
-                    ImageView piece = createPiece(pieceSymbol);
+                    ImageView piece = createPiece(pieceSymbol);//creates the graphics of the piece
                     gridPane.add(piece, col, row);
 
                     int finalCol = col;
                     String finalPieceSymbol = pieceSymbol;
                     assert piece != null;
-                    piece.setOnMouseClicked(e -> handleTileOrPieceClick(displayRow, finalCol, finalPieceSymbol));
+                    piece.setOnMouseClicked(_ -> handleTileOrPieceClick(displayRow, finalCol, finalPieceSymbol));//defines the function that is called on click on piece
                 }
 
                 int finalCol1 = col;
                 String finalPieceSymbol1 = pieceSymbol;
-                tile.setOnMouseClicked(e -> handleTileOrPieceClick(displayRow, finalCol1, finalPieceSymbol1));
+                tile.setOnMouseClicked(_ -> handleTileOrPieceClick(displayRow, finalCol1, finalPieceSymbol1));//defines the function that is called on click on tile
             }
         }
     }
 
 
-    // Method to create a chessboard tile
+    //method to create a chessboard tile
     protected Rectangle createTile(int row, int col) {
         Rectangle tile = new Rectangle(TILE_SIZE, TILE_SIZE);
         tile.setFill((row + col) % 2 == 0 ? Color.rgb(245, 245, 245) : Color.rgb(118, 150, 86));
-        tile.setOnMouseClicked(e -> onTileClicked(row, col));
+        tile.setOnMouseClicked(_ -> onTileClicked(row, col));
         return tile;
     }
 
-    // Handle both piece and tile clicks in a unified way
+    //handle both piece and tile clicks in a  unified way
     protected void handleTileOrPieceClick(int row, int col, String pieceSymbol)
     {
         if(gameEnded) { return; } // if game has ended ignore the attempt
 
         if (pieceSelected) {
-            // If a piece is already selected, we are attempting to move it
+            //piece is already selected, we are attempting to move it
             onTileClicked(row, col);
         } else {
-            // If no piece is selected, we are attempting to select a piece
+            // no piece is selected we are attempting to select a piece
             if (pieceSymbol != null) {
                 onPieceClicked(row, col);
             }
         }
     }
 
-    // Handle tile click event for moving pieces
+    //handle tile click event for moving pieces
     protected abstract void onTileClicked(int row, int col);
 
-    // Handle piece click event
+    //handle piece click event
     protected void onPieceClicked(int row, int col) {
-        // Ensure it's the player's turn before allowing them to move
+        //ensure it's the player's turn before allowing them to move
         if (!isPlayerTurn) {
             System.out.println("It's not your turn!");
             return;
         }
-        // Select the new piece and highlight its possible moves
+        //select the new piece and highlight its possible moves
         selectedRow = row;
         selectedCol = col;
-        highlightTile(row, col); // Highlight the selected tile
-        highlightLegalMoves(row, col); // Highlight possible moves
+        highlightTile(row, col); //highlight  the selected tile
+        highlightLegalMoves(row, col); // highlight possible moves
         pieceSelected = true;
     }
 
     protected void highlightTile(int row, int col) {
-        // Adjust row for black's perspective
+        // it changes row for black's perspective
         int squareAdjustedRow = getSquareAdjustedRow(row);
 
-        // Ensure squareAdjustedRow and col are within valid bounds
+        // it ensures squareAdjustedRow and col are within valid bound values
         if (squareAdjustedRow >= 0 && squareAdjustedRow < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
             for (javafx.scene.Node node : gridPane.getChildren()) {
                 if (GridPane.getRowIndex(node) == squareAdjustedRow && GridPane.getColumnIndex(node) == col) {
                     if (node instanceof Rectangle tile) {
-                        // Darken the existing background color of the tile
+                        //darkens the existing background color of the tile
                         Color originalColor = (Color) tile.getFill();
-                        Color highlightedColor = originalColor.darker(); // Darken it slightly
+                        Color highlightedColor = originalColor.darker();
                         tile.setFill(highlightedColor);
                     }
                 }
@@ -167,28 +166,28 @@ public abstract class BaseBoardController
     }
 
     protected void highlightLegalMoves(int row, int col) {
-        // Adjust row for black's perspective
+        //adjust row for black's perspective
         int squareAdjustedRow = getSquareAdjustedRow(row);
         Square square = getSquare(squareAdjustedRow, col);
 
         try {
-            // Generate all legal moves from the current board state
+            //generate all legal moves from the current board state
             List<Move> legalMoves = MoveGenerator.generateLegalMoves(chesslibBoard);
 
-            // Filter moves that are specific to the given square
+            //filters moves that are specific to the given square
             for (Move move : legalMoves) {
                 if (move.getFrom().equals(square)) {
                     int toRow = getRowFromUci(move.getTo().value());
                     int toCol = getColFromUci(move.getTo().value());
-                    highlightTile(toRow, toCol); // Highlight legal moves
+                    highlightTile(toRow, toCol); //highlights  legal moves
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("An error occurred while performing the operation:" + " Highlighting Legal Moves");
         }
     }
 
-    // Check if a move is legal
+    // check if a move is legal
     protected boolean isLegalMove(int fromRow, int fromCol, int toRow, int toCol) {
         int squareAdjustedFromRow = getSquareAdjustedRow(fromRow);
         int squareAdjustedToRow = getSquareAdjustedRow(toRow);
@@ -199,14 +198,14 @@ public abstract class BaseBoardController
             List<Move> legalMoves = MoveGenerator.generateLegalMoves(chesslibBoard);
             return legalMoves.stream().anyMatch(move -> move.getFrom().equals(from) && move.getTo().equals(to));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("An error occurred while performing the operation:" + " Checking the legality of a move");
         }
         return false;
     }
 
     protected void makePlayerMove(int fromRow, int fromCol, int toRow, int toCol)
     {
-        // Adjust the row and column based on the player's color for square
+        //this function adjusts the row and column based on the player's color for square
         int squareAdjustedFromRow = getSquareAdjustedRow(fromRow);
         int squareAdjustedToRow = getSquareAdjustedRow(toRow);
 
@@ -215,12 +214,12 @@ public abstract class BaseBoardController
         Square from = getSquare(squareAdjustedFromRow, fromCol);
         Square to = getSquare(squareAdjustedToRow, toCol);
 
-        // Move the piece in the chesslibBoard
+        // Moves the piece in the chesslibBoard
         AtomicReference<Move> move = new AtomicReference<>(new Move(from, to));
-        // Check if the move is castling
+        // checks if the move is castling
         Piece movingPiece = chesslibBoard.getPiece(from);
 
-        // Check if the destination tile contains an enemy piece
+        // Checks if the destination tile contains an enemy piece
         AtomicReference<String> pieceSymbol = new AtomicReference<>(playerGraphicsBoard.getPieceAt(fromRow, fromCol));
         String targetPieceSymbol = enemyGraphicsBoard.getPieceAt(toRow, toCol);
 
@@ -237,9 +236,9 @@ public abstract class BaseBoardController
         }
         // promotion
         else if (movingPiece.getPieceType() == PieceType.PAWN && (toRow == 0 || toRow == BOARD_SIZE - 1)) {
-            // Trigger pawn promotion popup
+            // trigger pawn promotion popup
             showPromotionPopup((selectedPromotionPiece) -> {
-                // After the player selects a promotion piece, proceed with promotion
+                // after the player selects a promotion piece, proceed with promotion
                 Move promotionMove = new Move(from, to, selectedPromotionPiece);
                 pieceSymbol.set(makePawnPromotion(selectedPromotionPiece));
                 move.set(promotionMove);
@@ -257,7 +256,7 @@ public abstract class BaseBoardController
         {
             chesslibBoard.doMove(move);
 
-            // Player capturing an enemy piece
+            // player capturing an enemy piece
             if (targetPieceSymbol != null) {
                 enemyGraphicsBoard.removePieceAt(toRow, toCol);
             }
@@ -279,15 +278,15 @@ public abstract class BaseBoardController
     protected abstract void fetchEnemyMove();
 
     protected void moveEnemyPiece(int fromRow, int fromCol, int toRow, int toCol, Move move) {
-        // Determine if the move is for the player or the enemy
+        // determine if the move is for the player or the enemy
         String pieceSymbol = enemyGraphicsBoard.getPieceAt(fromRow, fromCol);
         Piece movingPiece = chesslibBoard.getPiece(move.getFrom());
 
-        // Handle castling
+        // handles castling
         if (movingPiece.getPieceType() == PieceType.KING && Math.abs(fromCol - toCol) == 2) {
             makeCastling(fromRow, toCol, enemyGraphicsBoard);
         }
-        // Handle en passant
+        // handle en passant
         else if (movingPiece.getPieceType() == PieceType.PAWN && !move.getFrom().getFile().equals(move.getTo().getFile())
                 && playerGraphicsBoard.getPieceAt(toRow, toCol) == null)
         {
@@ -299,17 +298,17 @@ public abstract class BaseBoardController
             pieceSymbol = getPieceSymbolForPromotion(promotionPiece); // set the promotion piece
         }
 
-        // Enemy capturing a player piece
+        // enemy capturing a player piece
         if (playerGraphicsBoard.getPieceAt(toRow, toCol) != null)
         {
             playerGraphicsBoard.removePieceAt(toRow, toCol);
         }
 
-        // Normal move: move the piece to the new position
+        // normal move: move the piece to the new position
         enemyGraphicsBoard.setPieceAt(toRow, toCol, pieceSymbol);
         enemyGraphicsBoard.removePieceAt(fromRow, fromCol);
 
-        // Update the grid after the move
+        // update the grid after the move
         gridPane.getChildren().clear();
         createChessBoard();
     }
@@ -346,7 +345,7 @@ public abstract class BaseBoardController
         return symbol;
     }
 
-    // Function to return the correct Piece object for promotion
+    // function to return the correct Piece object for promotion
     protected static Piece getPromotionPiece(char promotionChar, Side side) {
         PieceType promotionPieceType = switch (promotionChar) {
             case 'q' ->  // Promotion to Queen
@@ -360,24 +359,24 @@ public abstract class BaseBoardController
             default -> throw new IllegalArgumentException("Invalid promotion piece: " + promotionChar);
         };
 
-        // Return the Piece object for the side (either Side.WHITE or Side.BLACK)
+        // return the Piece object for the side (either Side.WHITE or Side.BLACK)
         return Piece.make(side, promotionPieceType);
     }
 
     protected void checkForDrawOrMateAndGotoEndScreen()
     {
-        // Check for checkmate or stalemate or draw
+        // check for checkmate or stalemate or draw
         if (chesslibBoard.isMated()) {
             System.out.println("Checkmate! Game over.");
             gameEnded = true;
             Side currentSide = chesslibBoard.getSideToMove(); // Whose turn it is in the game
 
             if (isPlayerBlack && currentSide == Side.BLACK || !isPlayerBlack && currentSide == Side.WHITE) {
-                // If it's the player's turn and checkmate, the player lost
+                // if it's the player's turn and checkmate, the player lost
                 System.out.println("Checkmate! You lost.");
                 showEndGameScreen("Checkmate! You lost...");
             } else {
-                // If it's the bot's turn and checkmate, the bot lost
+                // if it's the bot's turn and checkmate, the bot lost
                 System.out.println("Checkmate! You win!");
                 showEndGameScreen("Checkmate! You win!");
             }
@@ -412,14 +411,14 @@ public abstract class BaseBoardController
         }
     }
 
-    // Method to clear all highlighted tiles
+    // method to clear all highlighted tiles
     protected void clearHighlights() {
         gridPane.getChildren().clear(); // Clear the grid
         createChessBoard(); // Recreate the board without any highlights
     }
 
     protected Square getSquare(int row, int col) {
-        // Flip the row when the player is black, so coordinates are correctly adjusted
+        // it Flips the row when the player is black, so coordinates are correctly adjusted
         int adjustedRow = getSquareAdjustedRow(row);
         String squareName = (getColLetter(col) + (BOARD_SIZE - adjustedRow)).toUpperCase(); //may need to change here cancel board size
 
@@ -456,10 +455,10 @@ public abstract class BaseBoardController
 
         if (pieceName != null) {
             String imagePath = "/org/chessio/chessio_client/Icons/" + color + "_" + pieceName + ".png";
-            Image image = new Image(getClass().getResourceAsStream(imagePath));
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             if (!image.isError()) {
                 ImageView imageView = new ImageView(image);
-                imageView.setFitWidth(TILE_SIZE * 0.8); // Adjust image size to fit the tile
+                imageView.setFitWidth(TILE_SIZE * 0.8); // Adjust image size to fit inside the tile
                 imageView.setFitHeight(TILE_SIZE * 0.8);
                 return imageView;
             } else {
@@ -470,7 +469,7 @@ public abstract class BaseBoardController
     }
 
     protected void showPromotionPopup(Consumer<Piece> promotionCallback) {
-        // Create a new popup stage
+        // create a new popup stage
         Stage popupStage = new Stage();
         popupStage.setTitle("Choose Promotion");
 
@@ -481,26 +480,26 @@ public abstract class BaseBoardController
         Label label = new Label("Choose your promotion:");
         vbox.getChildren().add(label);
 
-        // Create buttons for each promotion option
+        // create buttons for each promotion option
         Button queenButton = new Button("Queen");
         Button knightButton = new Button("Knight");
         Button rookButton = new Button("Rook");
         Button bishopButton = new Button("Bishop");
 
-        // Set button actions
-        queenButton.setOnAction(e -> {
+        // set button actions(all cases of promotion)
+        queenButton.setOnAction(_ -> {
             promotionCallback.accept(Piece.make(chesslibBoard.getSideToMove(), PieceType.QUEEN));
             popupStage.close();
         });
-        knightButton.setOnAction(e -> {
+        knightButton.setOnAction(_ -> {
             promotionCallback.accept(Piece.make(chesslibBoard.getSideToMove(), PieceType.KNIGHT));
             popupStage.close();
         });
-        rookButton.setOnAction(e -> {
+        rookButton.setOnAction(_ -> {
             promotionCallback.accept(Piece.make(chesslibBoard.getSideToMove(), PieceType.ROOK));
             popupStage.close();
         });
-        bishopButton.setOnAction(e -> {
+        bishopButton.setOnAction(_ -> {
             promotionCallback.accept(Piece.make(chesslibBoard.getSideToMove(), PieceType.BISHOP));
             popupStage.close();
         });
@@ -509,8 +508,8 @@ public abstract class BaseBoardController
 
         Scene scene = new Scene(vbox, 200, 200);
         popupStage.setScene(scene);
-        popupStage.initModality(Modality.APPLICATION_MODAL); // Block user interaction with other windows
-        popupStage.showAndWait(); // Wait for the user to choose
+        popupStage.initModality(Modality.APPLICATION_MODAL); // Blocks user interaction with other windows
+        popupStage.showAndWait(); // it Waits for the user to choose
     }
 
     protected String getPieceSymbolForPromotion(Piece promotionPiece) {
@@ -533,15 +532,15 @@ public abstract class BaseBoardController
     }
 
     protected void showEndGameScreen(String message) {
-        // Create a dimming effect on the chessboard
+        // creates a dimming effect on the chessboard
         ColorAdjust dimEffect = new ColorAdjust();
         dimEffect.setBrightness(-0.5);  // Darken the chessboard
         gridPane.setEffect(dimEffect);
 
-        // Set the end-game message
+        // set the end-game message
         endGameLabel.setText(message);
 
-        // Make the overlay visible with a fade-in transition
+        // Makes the overlay visible with a fade transition
         endGameOverlay.setVisible(true);
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), endGameOverlay);
         fadeIn.setFromValue(0);
@@ -552,7 +551,7 @@ public abstract class BaseBoardController
     @FXML
     protected abstract void goToHomeScreen();
 
-    // Method to restart the game
+    // method to restart the game
     @FXML
     protected abstract void restartGame();
 

@@ -29,16 +29,13 @@ public class LoginController
     @FXML
     private Button loginButton;
 
-    @FXML
-    private Button registerButton;
-
     private ClientHttpSender clientHttpSender;
 
     public HashMap<String, String> fxmlFiles;
 
     @FXML
     public void initialize() {
-        // Set initial values or perform any other necessary setup
+        // set initials values or perform any other necessary setup
         fxmlFiles = new HashMap<>();
         fxmlFiles.put("Login", "login.fxml");
         fxmlFiles.put("Register", "register.fxml");
@@ -69,12 +66,12 @@ public class LoginController
 
         var loginTask = clientHttpSender.postAsync("/login", loginRequest);
 
-        loginTask.setOnSucceeded(event -> {
+        loginTask.setOnSucceeded(_ -> {
             HttpResponse<String> response = loginTask.getValue();
             handleResponse(response, username);
         });
 
-        loginTask.setOnFailed(event -> {
+        loginTask.setOnFailed(_ -> {
             Throwable e = loginTask.getException();
             handleError(e);
         });
@@ -107,7 +104,6 @@ public class LoginController
                     stage.show();
                 }
                 catch (IOException e) {
-                    e.printStackTrace();
                     System.out.println("Error opening home screen: " + e.getMessage());
                 }
             });
@@ -122,7 +118,6 @@ public class LoginController
     private void handleError(Throwable e) {
         System.out.println("Error during login: " + e.getMessage());
         System.out.println("Connection error: " + e.getMessage());
-        e.printStackTrace();
     }
 
     private void clearFields() {
@@ -135,13 +130,13 @@ public class LoginController
         System.out.println("Register button clicked");
 
         // Change the scene to register.fxml instead of opening a new window
-        openNewScene("/org/chessio/chessio_client/register.fxml");
+        openNewScene();
     }
 
-    private void openNewScene(String fxmlFilePath) throws IOException {
+    private void openNewScene() throws IOException {
         // Load the new FXML file
         clientHttpSender.shutdown();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFilePath));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/register.fxml"));
         Parent root = loader.load();
 
         // Get the current stage using any node (e.g., loginButton or registerButton)

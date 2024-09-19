@@ -63,7 +63,7 @@
             </Button>
 
             <!-- Username label -->
-            <Label fx:id="usernameLabel" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;" />
+            <Label fx:id="usernameLabel" text="Username" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: white;" />
 
             <!-- Label showing "Your turn" -->
             <Label fx:id="turnLabel" text="Your turn" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;" />

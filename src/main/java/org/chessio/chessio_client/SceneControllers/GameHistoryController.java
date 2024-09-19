@@ -1,12 +1,9 @@
 package org.chessio.chessio_client.SceneControllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -16,14 +13,15 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import org.chessio.chessio_client.JavafxUtils.JavaFXUtils;
 import org.chessio.chessio_client.Models.GameHistoryRequest;
 import org.chessio.chessio_client.Models.GameSummary;
 import org.chessio.chessio_client.Services.ClientHttpSender;
 
 import java.net.http.HttpResponse;
-import java.util.LinkedList;
 import java.util.List;
+
+// Written by Ilai Azaria and Eitan Feldsherovich, 2024
+// This class creates the screen that shows the game history for a user, and is given by a request from the server.
 
 public class GameHistoryController {
     @FXML
@@ -48,19 +46,19 @@ public class GameHistoryController {
     @FXML
     public void initialize(String username) {
         try {
-            // Initialize the table columns
+            // Initializes the table columns
             player1Column.setCellValueFactory(new PropertyValueFactory<>("player1"));
             player2Column.setCellValueFactory(new PropertyValueFactory<>("player2"));
             winnerColumn.setCellValueFactory(new PropertyValueFactory<>("winner"));
 
-            // Send plain text request (username)
+            // send plain text request with username
             GameHistoryRequest gameHistoryRequest = new GameHistoryRequest(username);
 
-            // Start the asynchronous task to send the request
+            // start the asynchronous task to send the request
             var gameHistoryTask = clientHttpSender.postAsync("/game_history", gameHistoryRequest);
 
-            // Set success handler for the task
-            gameHistoryTask.setOnSucceeded(event -> {
+            // set success handler for the task
+            gameHistoryTask.setOnSucceeded(_ -> {
                 try {
                     HttpResponse<String> response = gameHistoryTask.getValue();
                     // Debug: Log the full response
@@ -69,23 +67,18 @@ public class GameHistoryController {
                     handleResponse(response);
                 } catch (Exception e) {
                     // Debug: Log any exceptions that occur while handling the response
-                    e.printStackTrace();
+                    System.out.println("An error occurred while performing the operation:" + " opening game history");
                 }
             });
 
             // Set failure handler for the task
-            gameHistoryTask.setOnFailed(event -> {
-                Throwable e = gameHistoryTask.getException();
-                // Debug: Log the failure details
-                e.printStackTrace();
-            });
+            gameHistoryTask.setOnFailed(_ -> System.out.println("An error occurred while performing the operation:" + " failes game history"));
 
             // Debug: Start the task in a new thread
             new Thread(gameHistoryTask).start();
 
         } catch (Exception e) {
             // Debug: Log any exceptions in the initialization method
-            e.printStackTrace();
         }
     }
 
@@ -111,24 +104,21 @@ public class GameHistoryController {
                 // Debug: Log the parsed games
                 System.out.println("Parsed game summaries: " + games);
 
-                // Update the leaderboard table with the retrieved game summaries
+                // update the leaderboard table with the retrieved game summaries
                 Platform.runLater(() -> {
                     leaderboardTable.setItems(FXCollections.observableArrayList(games));
                 });
             } else {
-                // Debug: Log the server error status
                 System.out.println("Server returned an error: " + response.statusCode());
             }
         } catch (Exception e) {
-            // Debug: Log any exceptions during the response handling
             System.err.println("Error handling server response: ");
-            e.printStackTrace();
         }
     }
 
 
     @FXML
-    private void handleBackToHomeAction(ActionEvent event) {
+    private void handleBackToHomeAction() {
         try {
             // Load the home screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/chessio/chessio_client/homeScreen.fxml"));
@@ -141,7 +131,7 @@ public class GameHistoryController {
             stage.setScene(new Scene(homeScreen));
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("An error occurred while performing the operation:" + " changing to go To HomeScreen");
         }
     }
 
