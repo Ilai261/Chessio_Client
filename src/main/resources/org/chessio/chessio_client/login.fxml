@@ -12,7 +12,7 @@
     </padding>
     <VBox alignment="TOP_CENTER" prefHeight="143.0" prefWidth="335.0" spacing="40.0">
         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cheesio" style = "    -fx-font-size: 18px;
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chessio" style = "    -fx-font-size: 18px;
     -fx-fill: white; /* Similar to -fx-text-fill */
     -fx-font-weight: bold;
     -fx-alignment: center;">">

@@ -16,10 +16,10 @@
                 <GridPane fx:id="gridPane" style="-fx-padding: 0; -fx-hgap: 0; -fx-vgap: 0;" />
 
                 <!-- Right side for Bot, Username, and buttons with custom background color -->
-                <VBox alignment="CENTER" spacing="35" style="-fx-padding: 20; -fx-background-color: #F0F0F0; -fx-border-width: 2px; -fx-border-color: #D3D3D3; -fx-border-radius: 10; -fx-background-radius: 10;" prefWidth="200">
+                <VBox alignment="CENTER" spacing="35" style="-fx-padding: 20; -fx-background-color: rgb(48, 46, 43); -fx-border-width: 2px; -fx-border-color: #D3D3D3; -fx-border-radius: 10; -fx-background-radius: 10;" prefWidth="200">
 
                         <!-- Label showing "Bot" -->
-                        <Label fx:id="enemyLabel" text="Bot" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+                        <Label fx:id="enemyLabel" text="Bot" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: white;" />
 
                         <!-- Resign button with improved UI -->
                         <Button fx:id="resignButton" text="Resign" style="
@@ -44,12 +44,12 @@
                         </Button>
 
                         <!-- Username label -->
-                        <Label fx:id="usernameLabel" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+                        <Label fx:id="usernameLabel" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;" />
 
                         <!-- Label showing "Your turn" -->
-                        <Label fx:id="turnLabel" text="Your turn" style="-fx-font-size: 18px; -fx-text-fill: #555;" />
+                        <Label fx:id="turnLabel" text="Your turn" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;" />
 
-                        <Label fx:id="timerLabel" text="Time elapsed: 0 seconds" style="-fx-font-size: 16px; -fx-text-fill: #333;" alignment="BOTTOM_RIGHT"/>
+                        <Label fx:id="timerLabel" text="Time elapsed: 0 seconds" style="-fx-font-size: 16px; -fx-text-fill: white;" alignment="BOTTOM_RIGHT"/>
                 </VBox>
         </HBox>
 
