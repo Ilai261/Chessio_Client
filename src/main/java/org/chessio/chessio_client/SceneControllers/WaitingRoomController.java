@@ -1,6 +1,6 @@
 // Written by Ilai Azaria and Eitan Feldsherovich, 2024
-//a screen that opens when a user wants to play online, waits for another user, meanwhile plays a cool animation
-//allows to go back to home screen and press other buttons.
+// a screen that opens when a user wants to play online, waits for another user, meanwhile plays a cool animation
+// allows to go back to home screen and press other buttons.
 
 package org.chessio.chessio_client.SceneControllers;
 

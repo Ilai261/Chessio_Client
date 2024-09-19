@@ -1,6 +1,6 @@
 // Written by Ilai Azaria and Eitan Feldsherovich, 2024
 // This class is handling the logging in and uses the server to authenticate, and allows unregistered users
-//to go to registery screen.
+// to go to registery screen.
 
 package org.chessio.chessio_client.SceneControllers;
 

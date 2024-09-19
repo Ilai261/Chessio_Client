@@ -1,6 +1,6 @@
 // Written by Ilai Azaria and Eitan Feldsherovich, 2024
 // This class is handling a big part of the logic behind the chess game online, it gets the move from the real opponent.
-//It updates the board in both screen, allows draw,winning or losing with a special screen to play again or quit.
+// It updates the board in both screen, allows draw,winning or losing with a special screen to play again or quit.
 
 package org.chessio.chessio_client.SceneControllers;
 
