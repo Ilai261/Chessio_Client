@@ -4,6 +4,8 @@ import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import jakarta.websocket.*;
@@ -14,8 +16,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 import org.chessio.chessio_client.Models.GraphicsBoard;
 
 import java.io.IOException;
@@ -28,6 +32,11 @@ public class OnlineBoardController extends BaseBoardController {
     private String currentEnemyMoveMessage;
     private UUID gameId;
     private boolean canOfferDraw = true;  // Flag to track draw offer cooldown
+    @FXML
+    private Label timerLabelOnline;  // Label for displaying the timer
+
+    private Timeline timer;  // To update the timer every second
+    private long startTimeMillis;  // To track the start time
 
     @Override
     public void initializeGame(String gameStartMessage)
@@ -46,7 +55,6 @@ public class OnlineBoardController extends BaseBoardController {
 
         // Set up the board and begin the game
         createChessBoard();
-
         // Add listener to the GridPane's scene property to ensure it's set before accessing the window
         Platform.runLater(() -> {
             Stage stage = (Stage) gridPane.getScene().getWindow();
@@ -57,6 +65,8 @@ public class OnlineBoardController extends BaseBoardController {
                 System.out.println("Stage is not yet available.");
             }
         });
+        //timer
+        startTimer();
     }
 
     public void handleServerMessage(String message)
@@ -158,7 +168,7 @@ public class OnlineBoardController extends BaseBoardController {
     @Override
     protected void handleResignAction(ActionEvent actionEvent)
     {
-
+        stopTimer();
         // Create a confirmation dialog
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Resign Confirmation");
@@ -233,6 +243,7 @@ public class OnlineBoardController extends BaseBoardController {
 
     private void handleEnemyResigned()
     {
+        stopTimer();
         gameEnded = true;
         gameResult = isPlayerBlack ? "black_win" : "white_win";
         showEndGameScreen("You won! " + enemyLabel.getText() + " has resigned...");
@@ -309,6 +320,7 @@ public class OnlineBoardController extends BaseBoardController {
 
     private void acceptDrawOffer() {
         try {
+            stopTimer();
             String drawAcceptedMessage = "draw_offer_accepted|" + gameId;
             session.getBasicRemote().sendText(drawAcceptedMessage);
             System.out.println("Draw offer accepted and game ended as draw");
@@ -330,6 +342,7 @@ public class OnlineBoardController extends BaseBoardController {
 
     private void handleDrawAccepted()
     {
+        stopTimer();
         gameEnded = true;
         gameResult = "draw";
         showEndGameScreen("draw offer accepted! It's a draw.");
@@ -376,6 +389,7 @@ public class OnlineBoardController extends BaseBoardController {
 
     // Method to handle window close event
     private void handleWindowClose(WindowEvent event) {
+        stopTimer();
         // Example: Ask for confirmation before closing
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Exit");
@@ -417,6 +431,25 @@ public class OnlineBoardController extends BaseBoardController {
 
     public void setGameId(UUID gameId) {
         this.gameId = gameId;
+    }
+
+    private void startTimer() {
+        // Initialize the start time
+        startTimeMillis = System.currentTimeMillis();
+
+        // Set up the timeline to update the elapsed time every second
+        timer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            long elapsedSeconds = (System.currentTimeMillis() - startTimeMillis) / 1000;
+            timerLabelOnline.setText("Time:\n" + elapsedSeconds + " seconds");
+        }));
+        timer.setCycleCount(Timeline.INDEFINITE);  // Keep the timer running
+        timer.play();
+    }
+
+    private void stopTimer() {
+        if (timer != null) {
+            timer.stop();
+        }
     }
 }
 

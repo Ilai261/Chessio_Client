@@ -1,6 +1,8 @@
 package org.chessio.chessio_client.SceneControllers;
 
 import com.github.bhlangonijr.chesslib.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.chessio.chessio_client.Models.GraphicsBoard;
 import com.github.bhlangonijr.chesslib.move.Move;
 
@@ -20,6 +23,11 @@ public class BotBoardController extends BaseBoardController
 
     private PrintWriter stockfishWriter;
     private BufferedReader stockfishReader;
+    @FXML
+    private Label timerLabel;  // Label for displaying the timer
+
+    private Timeline timer;  // To update the timer every second
+    private long startTimeMillis;  // To track the start time
 
     // Initialize the game and start Stockfish process
     @Override
@@ -33,6 +41,7 @@ public class BotBoardController extends BaseBoardController
         isPlayerTurn = !isPlayerBlack; // Player's turn if they are white
         createChessBoard();
         startStockfish();
+        startTimer();
         setStockfishLevel(this.enemyLevel);  // Set Stockfish level
         if (!isPlayerTurn)
         {
@@ -66,7 +75,9 @@ public class BotBoardController extends BaseBoardController
     @Override
     protected void fetchEnemyMove()
     {
-        if(gameEnded) { return; }
+        if(gameEnded) {
+            stopTimer();
+            return; }
 
         String bestMove = getBestMoveFromStockfish();
         if (bestMove != null) {
@@ -103,6 +114,7 @@ public class BotBoardController extends BaseBoardController
     @Override
     public void handleResignAction(ActionEvent actionEvent)
     {
+        stopTimer();
         // Create a confirmation dialog
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Resign Confirmation");
@@ -220,4 +232,24 @@ public class BotBoardController extends BaseBoardController
         }
         return null;
     }
+
+    private void startTimer() {
+        // Initialize the start time
+        startTimeMillis = System.currentTimeMillis();
+
+        // Set up the timeline to update the elapsed time every second
+        timer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            long elapsedSeconds = (System.currentTimeMillis() - startTimeMillis) / 1000;
+            timerLabel.setText("Time:\n" + elapsedSeconds + " seconds");
+        }));
+        timer.setCycleCount(Timeline.INDEFINITE);  // Keep the timer running
+        timer.play();
+    }
+
+    private void stopTimer() {
+        if (timer != null) {
+            timer.stop();
+        }
+    }
+
 }
