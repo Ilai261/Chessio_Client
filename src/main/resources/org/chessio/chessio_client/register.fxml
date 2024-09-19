@@ -22,14 +22,14 @@
                     <StackPane prefHeight="21.0" prefWidth="312.0">
                         <children>
                             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="27.0" stroke="BLACK" strokeType="INSIDE" width="338.0" />
-                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="שם משתמש" />
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="User Name" />
                         </children>
                     </StackPane>
                     <TextField fx:id="usernameField" />
                     <StackPane prefHeight="15.0" prefWidth="323.0">
                         <children>
                             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="27.0" stroke="BLACK" strokeType="INSIDE" width="335.0" />
-                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="password" />
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
                         </children>
                     </StackPane>
                     <TextField fx:id="passwordField" />
@@ -37,5 +37,5 @@
             </VBox>
         </children>
     </VBox>
-    <Button fx:id="registerButton" onAction="#handleRegister" prefHeight="33.0" prefWidth="67.0" text="register" textAlignment="CENTER" textOverrun="CLIP" />
+    <Button fx:id="registerButton" onAction="#handleRegister" prefHeight="33.0" prefWidth="67.0" text="Register" textAlignment="CENTER" textOverrun="CLIP" />
 </VBox>
